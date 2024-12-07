@@ -492,7 +492,7 @@ Galapix::print_usage()
             << "  -p, --pattern GLOB     Select files from the database via globbing pattern\n"
             << "  -g, --geometry WxH     Start with window size WxH\n"
             << "  -a, --anti-aliasing N  Anti-aliasing factor 0,2,4 (default: 0)\n"
-            << "  -t, --title STRING     Set window title"
+            << "  -r, --title STRING     Set window title"
             << "\n"
             << "Compiled Fetures:\n"
 #ifdef HAVE_SPACE_NAVIGATOR
@@ -653,7 +653,7 @@ Galapix::parse_args(int argc, char** argv, Options& opts)
           throw std::runtime_error(std::string(argv[i-1]) + " requires an argument");
         }
       }
-      else if (strcmp(argv[i], "-t") == 0 ||
+      else if (strcmp(argv[i], "-r") == 0 ||
                strcmp(argv[i], "--threads") == 0)
       {
         ++i;
