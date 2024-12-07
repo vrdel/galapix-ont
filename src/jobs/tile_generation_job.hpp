@@ -20,7 +20,7 @@
 #define HEADER_GALAPIX_JOBS_TILE_GENERATION_JOB_HPP
 
 #include <boost/function.hpp>
-#include <boost/signals.hpp>
+#include <boost/signals2/signal.hpp>
 #include <boost/thread/mutex.hpp>
 
 #include "database/file_entry.hpp"
@@ -38,7 +38,7 @@ private:
     int       scale;
     Vector2i  pos;
     boost::function<void (Tile)> callback;
-    
+
     TileRequest(const JobHandle& job_handle_,
                 int scale_, const Vector2i& pos_,
                 const boost::function<void (Tile)>& callback_) :
@@ -49,11 +49,11 @@ private:
   };
 
   typedef std::vector<TileRequest> TileRequests;
-  
-private: 
+
+private:
   boost::mutex m_state_mutex;
 
-  enum { 
+  enum {
     kWaiting,
     kRunning,
     kAborted,
@@ -66,21 +66,21 @@ private:
   /** Only valid if state is kRunning or kDone */
   int       m_min_scale;
   int       m_max_scale;
-  
+
   int       m_min_scale_in_db;
   int       m_max_scale_in_db;
-  
+
   /** Regular TileRequests */
   TileRequests m_tile_requests;
 
   /** TileRequests that came in when the process was already running */
   TileRequests m_late_tile_requests;
-  
+
   typedef std::vector<Tile> Tiles;
   Tiles m_tiles;
 
-  boost::signal<void (FileEntry)> m_sig_file_callback;
-  boost::signal<void (FileEntry, Tile)> m_sig_tile_callback;
+  boost::signals2::signal<void (FileEntry)> m_sig_file_callback;
+  boost::signals2::signal<void (FileEntry, Tile)> m_sig_tile_callback;
 
 public:
   TileGenerationJob(const FileEntry& file_entry, int min_scale_in_db, int max_scale_in_db);
@@ -97,8 +97,8 @@ public:
 
   bool is_aborted();
 
-  boost::signal<void (FileEntry)>& sig_file_callback() { return m_sig_file_callback; }
-  boost::signal<void (FileEntry, Tile)>& sig_tile_callback() { return m_sig_tile_callback; }
+  boost::signals2::signal<void (FileEntry)>& sig_file_callback() { return m_sig_file_callback; }
+  boost::signals2::signal<void (FileEntry, Tile)>& sig_tile_callback() { return m_sig_tile_callback; }
 
 private:
   void process_tile(const Tile& tile);

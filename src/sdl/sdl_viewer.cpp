@@ -188,14 +188,17 @@ SDLViewer::process_event(const SDL_Event& event)
           m_quit = true;
           break;
 
+        /*
         case SDLK_d:
           m_viewer.zoom_to_selection();
           break;
+        */
 
         case SDLK_x:
           m_viewer.zoom_to_selection();
           break;
 
+        /*
         case SDLK_KP_PLUS:
           m_viewer.get_state().zoom(1.25f);
           break;
@@ -203,6 +206,7 @@ SDLViewer::process_event(const SDL_Event& event)
         case SDLK_KP_MINUS:
           m_viewer.get_state().zoom(1.0f/1.25f);
           break;
+        */
 
         case SDLK_p:
           m_viewer.set_pan_tool();
@@ -419,11 +423,13 @@ SDLViewer::run()
   boost::thread  space_navigator_thread(boost::bind(&SpaceNavigator::run, &space_navigator));
 #endif
 
+
   while(!m_quit)
   {
     if (m_viewer.is_active())
     {
       SDL_Event event;
+
       while (SDL_PollEvent(&event))
       {
         process_event(event);

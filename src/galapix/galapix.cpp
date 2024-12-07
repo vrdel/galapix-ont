@@ -114,7 +114,7 @@ Galapix::merge(const std::string& database,
   for(std::vector<std::string>::const_iterator db_it = filenames.begin(); db_it != filenames.end(); ++db_it)
   {
     Database in_db(*db_it);
-          
+
     std::vector<FileEntry> entries;
     in_db.get_files().get_file_entries(entries);
     for(std::vector<FileEntry>::iterator i = entries.begin(); i != entries.end(); ++i)
@@ -256,11 +256,11 @@ Galapix::filegen(const Options& opts,
 
   job_manager.start_thread();
   database_thread.start_thread();
-  
+
   for(std::vector<URL>::size_type i = 0; i < url.size(); ++i)
   {
-    database_thread.request_file(url[i], 
-                                 boost::function<void (FileEntry)>(), 
+    database_thread.request_file(url[i],
+                                 boost::function<void (FileEntry)>(),
                                  boost::function<void (FileEntry, Tile)>());
   }
 
@@ -273,13 +273,13 @@ Galapix::filegen(const Options& opts,
 
 void
 Galapix::thumbgen(const Options& opts,
-                  const std::vector<URL>& urls, 
+                  const std::vector<URL>& urls,
                   bool generate_all_tiles)
 {
   Database       database(opts.database);
   JobManager     job_manager(opts.threads);
   DatabaseThread database_thread(database, job_manager);
-  
+
   database_thread.start_thread();
   job_manager.start_thread();
 
@@ -290,9 +290,15 @@ Galapix::thumbgen(const Options& opts,
   // gather FileEntries
   for(std::vector<URL>::const_iterator i = urls.begin(); i != urls.end(); ++i)
   {
-    job_handle_group.add(database_thread.request_file(*i, 
-                                                      boost::bind(&std::vector<FileEntry>::push_back, &file_entries, _1),
-                                                      boost::function<void (FileEntry, Tile)>())); 
+    job_handle_group.add(database_thread.request_file(*i,
+                                                      [&file_entries](const FileEntry& entry) {
+                                                        file_entries.push_back(entry);
+                                                      },
+                                                      std::function<void (FileEntry, Tile)>()));
+
+    //job_handle_group.add(database_thread.request_file(*i,
+                                                      //boost::bind(&std::vector<FileEntry>::push_back, &file_entries, _1),
+                                                      //boost::function<void (FileEntry, Tile)>()));
   }
   job_handle_group.wait();
   job_handle_group.clear();
@@ -333,7 +339,7 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
 
   Workspace workspace;
 
-  { // process all -p PATTERN options 
+  { // process all -p PATTERN options
     std::vector<FileEntry> file_entries;
 
     for(std::vector<std::string>::const_iterator i = opts.patterns.begin(); i != opts.patterns.end(); ++i)
@@ -341,7 +347,7 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
       std::cout << "Processing pattern: '" << *i << "'" << std::endl;
 
       if (*i == "*")
-      { 
+      {
         // special case to display everything, might be faster then
         // using the pattern
         database.get_files().get_file_entries(file_entries);
@@ -356,13 +362,13 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
     {
       ImagePtr image = Image::create(i->get_url(), DatabaseTileProvider::create(*i));
       workspace.add_image(image);
-      
+
       TileEntry tile_entry;
       if (database.get_tiles().get_tile(*i, i->get_thumbnail_scale(), Vector2i(0,0), tile_entry))
       {
         image->receive_tile(*i, Tile(tile_entry));
       }
-       
+
       // print progress
       int n = (i - file_entries.begin())+1;
       int total = file_entries.size();
@@ -484,10 +490,10 @@ Galapix::print_usage()
             << "  -t, --threads          Number of worker threads (default: 2)\n"
             << "  -F, --files-from FILE  Get urls from FILE\n"
             << "  -p, --pattern GLOB     Select files from the database via globbing pattern\n"
-            << "  -g, --geometry WxH     Start with window size WxH\n"        
+            << "  -g, --geometry WxH     Start with window size WxH\n"
             << "  -a, --anti-aliasing N  Anti-aliasing factor 0,2,4 (default: 0)\n"
             << "\n"
-            << "Compiled Fetures:\n" 
+            << "Compiled Fetures:\n"
 #ifdef HAVE_SPACE_NAVIGATOR
             << "  * SpaceNavigator: enabled\n"
 #else
@@ -503,7 +509,7 @@ Galapix::main(int argc, char** argv)
   // if (!sqlite3_threadsafe())
   //  throw std::runtime_error("Error: SQLite must be compiled with SQLITE_THREADSAFE");
 
-  try 
+  try
   {
     Options opts;
     opts.threads  = 2;
@@ -524,13 +530,13 @@ Galapix::main(int argc, char** argv)
 
     return EXIT_SUCCESS;
   }
-  catch(const std::exception& err) 
+  catch(const std::exception& err)
   {
     std::cout << "Exception: " << err.what() << std::endl;
     return EXIT_FAILURE;
   }
 }
-  
+
 void
 Galapix::run(const Options& opts)
 {
@@ -560,7 +566,7 @@ Galapix::run(const Options& opts)
     std::cout << urls.size() << " files found." << std::endl;
 
     const std::string& command = opts.rest.front();
-        
+
     if (command == "view")
     {
       if (urls.empty() && opts.patterns.empty())
@@ -657,7 +663,7 @@ Galapix::parse_args(int argc, char** argv, Options& opts)
         else
         {
           throw std::runtime_error(std::string(argv[i-1]) + " requires an argument");
-        }              
+        }
       }
       else if (strcmp(argv[i], "-F") == 0 ||
                strcmp(argv[i], "--files-from") == 0)
@@ -700,7 +706,7 @@ Galapix::parse_args(int argc, char** argv, Options& opts)
         if (i < argc)
           anti_aliasing = atoi(argv[i]);
         else
-          throw std::runtime_error(std::string("Option ") + argv[i-1] + " requires an argument");                  
+          throw std::runtime_error(std::string("Option ") + argv[i-1] + " requires an argument");
       }
       else if (strcmp(argv[i], "--geometry") == 0 ||
                strcmp(argv[i], "-g") == 0)
@@ -740,11 +746,11 @@ Galapix::parse_args(int argc, char** argv, Options& opts)
     }
   }
 }
-  
+
 int main(int argc, char** argv)
 {
   Galapix app;
   return app.main(argc, argv);
-}  
+}
 
 /* EOF */
