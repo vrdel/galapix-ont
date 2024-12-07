@@ -46,7 +46,7 @@ class Project:
             'src/display/framebuffer.cpp',
             'src/galapix/galapix.cpp',
             'src/galapix/viewer.cpp',
-            ]
+        ]
 
     def configure(self):
         if 'BUILD' in self.env:
@@ -75,8 +75,8 @@ class Project:
         #    print "Error: boost_thread is missing"
         #    Exit(1)
 
-        if not conf.CheckLibWithHeader("boost_signals", "boost/signals.hpp", "c++", autoadd=0):
-            print "Error: boost_signals is missing"
+        if not conf.CheckHeader("boost/signals2/signal.hpp", "<>", "c++"):
+            print("Error: boost_signals2 is missing")
             Exit(1)
 
         if not conf.CheckLibWithHeader("exif", "libexif/exif-data.h", "c++", autoadd=0):
