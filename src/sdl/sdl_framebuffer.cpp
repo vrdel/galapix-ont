@@ -26,6 +26,7 @@
 
 #include "math/math.hpp"
 #include "display/framebuffer.hpp"
+#include "galapix/options.hpp"
 
 SDL_Surface* SDLFramebuffer::screen = 0;
 Uint32 SDLFramebuffer::flags = 0;
@@ -33,7 +34,7 @@ Size SDLFramebuffer::desktop_resolution;
 Size SDLFramebuffer::window_resolution;
 
 void
-SDLFramebuffer::set_video_mode(const Size& size, bool fullscreen, int anti_aliasing)
+SDLFramebuffer::set_video_mode(const Size& size, bool fullscreen, int anti_aliasing, const std::string &title)
 {
   assert(screen == 0);
 
@@ -74,7 +75,10 @@ SDLFramebuffer::set_video_mode(const Size& size, bool fullscreen, int anti_alias
     exit(1);
   }
 
-  SDL_WM_SetCaption("Galapix 0.1.3", 0 /* icon */);
+  Options opts;
+
+  //SDL_WM_SetCaption("Galapix 0.1.3", 0 /* icon */);
+  SDL_WM_SetCaption(title.c_str(), 0 /* icon */);
   SDL_EnableUNICODE(1);
 
   Framebuffer::init();

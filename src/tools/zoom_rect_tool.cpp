@@ -68,7 +68,7 @@ ZoomRectTool::draw()
     Rectf rect(click_pos,
                viewer->get_state().screen2world(mouse_pos));
     rect.normalize();
-    Framebuffer::draw_rect(rect, RGB(255, 255, 255));
+    Framebuffer::draw_rect(rect, RGB(255, 23, 65));
   }
 }
 

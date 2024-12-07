@@ -26,11 +26,13 @@ public:
   std::vector<std::string> patterns;
   int         threads;
   std::vector<std::string> rest;
+  std::string title;
 
   Options() :
     database(),
     patterns(),
     threads(),
+    title(),
     rest()
   {}
 };

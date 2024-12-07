@@ -37,6 +37,7 @@ private:
   Size m_geometry;
   bool m_fullscreen;
   int  m_anti_aliasing;
+  std::string m_title;
 
   bool m_quit;
   bool m_spnav_allow_rotate;
@@ -45,7 +46,7 @@ private:
   
 public:
   SDLViewer(const Size& geometry, bool fullscreen, int  anti_aliasing,
-            Viewer& viewer);
+            Viewer& viewer, const std::string &title);
   ~SDLViewer();
 
   void run();

@@ -88,13 +88,13 @@ Viewer::Viewer(Workspace* workspace_) :
 
   keyboard_view_rotate_tool = boost::shared_ptr<ViewRotateTool>(new ViewRotateTool(this));
 
-  left_tool   = zoom_in_tool.get();
+  left_tool   = pan_tool.get();
   middle_tool = pan_tool.get();
-  right_tool  = zoom_out_tool.get();
+  right_tool  = zoom_rect_tool.get();
 
   m_background_color = 0;
   // Black to White
-  m_background_colors.push_back(RGBA(  0,   0,   0));
+  m_background_colors.push_back(RGBA(100, 100, 100));
   m_background_colors.push_back(RGBA( 64,  64,  64));
   m_background_colors.push_back(RGBA(128, 128, 128));
   m_background_colors.push_back(RGBA(255, 255, 255));

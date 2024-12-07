@@ -63,7 +63,8 @@
 Galapix::Galapix()
   : fullscreen(false),
     geometry(800, 600),
-    anti_aliasing(0)
+    anti_aliasing(0),
+    title("Galapix 0.1.3")
 {
   Filesystem::init();
 }
@@ -435,7 +436,7 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
 
 #ifdef GALAPIX_SDL
   Viewer viewer(&workspace);
-  SDLViewer sdl_viewer(geometry, fullscreen, anti_aliasing, viewer);
+  SDLViewer sdl_viewer(geometry, fullscreen, anti_aliasing, viewer, title);
   viewer.layout_tight();
   viewer.finish_layout();
   viewer.zoom_to_selection();
@@ -714,6 +715,19 @@ Galapix::parse_args(int argc, char** argv, Options& opts)
                strcmp(argv[i], "-f") == 0)
       {
         fullscreen = true;
+      }
+      else if (strcmp(argv[i], "--title") == 0)
+      {
+        ++i;
+        if (i < argc)
+        {
+          title = argv[i];
+        }
+        else
+        {
+          throw std::runtime_error(std::string(argv[i-1]) + " requires an argument");
+        }
+
       }
       else
       {

@@ -41,7 +41,7 @@
 #endif
 
 SDLViewer::SDLViewer(const Size& geometry, bool fullscreen, int  anti_aliasing,
-                     Viewer& viewer) :
+                     Viewer& viewer, const std::string &title) :
   m_geometry(geometry),
   m_fullscreen(fullscreen),
   m_anti_aliasing(anti_aliasing),
@@ -56,7 +56,7 @@ SDLViewer::SDLViewer(const Size& geometry, bool fullscreen, int  anti_aliasing,
   }
   atexit(SDL_Quit); 
 
-  SDLFramebuffer::set_video_mode(geometry, fullscreen, anti_aliasing);
+  SDLFramebuffer::set_video_mode(geometry, fullscreen, anti_aliasing, title);
 }
 
 SDLViewer::~SDLViewer()
@@ -66,6 +66,7 @@ SDLViewer::~SDLViewer()
 void
 SDLViewer::process_event(const SDL_Event& event)
 {
+
   Uint8* keystate = SDL_GetKeyState(0);
 
   switch(event.type)
@@ -198,22 +199,7 @@ SDLViewer::process_event(const SDL_Event& event)
         case SDLK_KP_MINUS:
           m_viewer.get_state().zoom(1.0f/1.25f);
           break;
-
-        case SDLK_KP8:
-          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(0.0f, +128.0f));
-          break;
-
-        case SDLK_KP2:
-          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(0.0f, -128.0f));
-          break;
-
-        case SDLK_KP4:
-          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(+128.0f, 0.0f));
-          break;
-
-        case SDLK_KP6:
-          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(-128.0f, 0.0f));
-          break;
+        */
 
         case SDLK_p:
           m_viewer.set_pan_tool();
@@ -239,7 +225,7 @@ SDLViewer::process_event(const SDL_Event& event)
           m_viewer.zoom_home();
           break;
 
-        case SDLK_s:
+        case SDLK_j:
           if (keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT])
           {
             m_viewer.sort_reverse_image_list();
@@ -367,6 +353,7 @@ SDLViewer::process_event(const SDL_Event& event)
           m_viewer.toggle_trackball_mode();
           break;
 
+        /*
         case SDLK_UP:
         case SDLK_DOWN:
           m_viewer.reset_view_rotation();
@@ -379,6 +366,7 @@ SDLViewer::process_event(const SDL_Event& event)
         case SDLK_RIGHT:
           m_viewer.rotate_view_90();
           break;
+        */
 
         case SDLK_b:
           if (keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT])
@@ -448,7 +436,84 @@ SDLViewer::run()
     else
     {
       SDL_Event event;
-      SDL_WaitEvent(NULL);
+
+      SDL_PumpEvents();
+
+      Uint8* keystate = SDL_GetKeyState(NULL);
+
+      if (keystate[SDLK_LEFT] && !(keystate[SDLK_LALT] || keystate[SDLK_RALT] || keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT]))
+      {
+        if (keystate[SDLK_LCTRL] || keystate[SDLK_RCTRL])
+        {
+          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(+32.0f, 0.0f));
+        }
+        else
+        {
+          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(+16.0f, 0.0f));
+        }
+      }
+      if (keystate[SDLK_RIGHT] && !(keystate[SDLK_LALT] || keystate[SDLK_RALT] || keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT]))
+      {
+        if (keystate[SDLK_LCTRL] || keystate[SDLK_RCTRL])
+        {
+          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(-32.0f, 0.0f));
+        }
+        else
+        {
+          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(-16.0f, 0.0f));
+        }
+      }
+
+      if (keystate[SDLK_UP] && !(keystate[SDLK_LALT] || keystate[SDLK_RALT] || keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT]))
+      {
+        if (keystate[SDLK_LCTRL] || keystate[SDLK_RCTRL])
+        {
+          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(0.0f, +32.0f));
+        }
+        else
+        {
+          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(0.0f, +16.0f));
+        }
+      }
+
+      if (keystate[SDLK_DOWN] && !(keystate[SDLK_LALT] || keystate[SDLK_RALT] || keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT]))
+      {
+        if (keystate[SDLK_LCTRL] || keystate[SDLK_RCTRL])
+        {
+          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(0.0f, -32.0f));
+        }
+        else
+        {
+          m_viewer.get_state().set_offset(m_viewer.get_state().get_offset() + Vector2f(0.0f, -16.0f));
+        }
+      }
+
+      if (keystate[SDLK_w] && !(keystate[SDLK_LALT] || keystate[SDLK_RALT] || keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT]))
+      {
+
+        if (keystate[SDLK_LCTRL])
+        {
+          m_viewer.get_state().zoom(1.15f);
+        }
+        else
+        {
+          m_viewer.get_state().zoom(1.05f);
+
+        }
+
+      }
+      if (keystate[SDLK_s] && !(keystate[SDLK_LALT] || keystate[SDLK_RALT] || keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT]))
+      {
+        if (keystate[SDLK_LCTRL])
+        {
+          m_viewer.get_state().zoom(1.0f/1.15f);
+        }
+        else
+        {
+          m_viewer.get_state().zoom(1.0f/1.05f);
+        }
+      }
+
       while (SDL_PollEvent(&event))
       {
         process_event(event);

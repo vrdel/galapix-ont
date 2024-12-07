@@ -33,7 +33,7 @@ private:
   static Size window_resolution;
 
 public:
-  static void set_video_mode(const Size& size, bool fullscreen, int anti_aliasing);
+  static void set_video_mode(const Size& size, bool fullscreen, int anti_aliasing, const std::string &title);
 
   static void toggle_fullscreen();
 

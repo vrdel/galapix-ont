@@ -19,6 +19,7 @@
 #include "plugins/png.hpp"
 
 #include <png.h>
+#include <string.h>
 #include <stdexcept>
 
 #include "util/log.hpp"

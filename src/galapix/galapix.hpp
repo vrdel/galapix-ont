@@ -33,6 +33,7 @@ private:
   bool fullscreen;
   Size geometry;
   int  anti_aliasing;
+  std::string title;
 
 public:
   Galapix();
