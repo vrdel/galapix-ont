@@ -3,8 +3,6 @@
 import glob
 import os
 
-CacheDir('cache')
-
 preset_cxxflags = {
     'release':     [ "-O3", "-s"  ],
     'profile':     [ "-O2", "-g3", "-pg" ],
