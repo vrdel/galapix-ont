@@ -48,22 +48,22 @@ class Project:
             'src/galapix/viewer.cpp',
             ]
 
-    def configure(self):       
+    def configure(self):
         if 'BUILD' in self.env:
-            print "Build type: %s" % self.env['BUILD']
+            print("Build type: %s" % self.env['BUILD'])
             self.env.Append(CXXFLAGS  = preset_cxxflags[self.env['BUILD']],
                             LINKFLAGS = preset_linkflags[self.env['BUILD']])
         else:
-            print "Build type: release"
+            print("Build type: release")
             self.env.Append(CXXFLAGS  = preset_cxxflags['release'],
                             LINKFLAGS = preset_linkflags['release'])
 
         conf = Configure(self.env)
 
         if self.env['CXX']:
-            print "Using C++ compiler...", self.env['CXX']
+            print("Using C++ compiler...", self.env['CXX'])
         else:
-            print "Error: C++ compiler missing"
+            print("Error: C++ compiler missing")
             Exit(1)
 
         if conf.CheckLibWithHeader("spnav", "spnav.h", "c++"):
@@ -74,29 +74,29 @@ class Project:
         #if not conf.CheckLibWithHeader("boost_thread", "boost/thread.hpp", "c++", autoadd=0):
         #    print "Error: boost_thread is missing"
         #    Exit(1)
-            
+
         if not conf.CheckLibWithHeader("boost_signals", "boost/signals.hpp", "c++", autoadd=0):
             print "Error: boost_signals is missing"
             Exit(1)
 
         if not conf.CheckLibWithHeader("exif", "libexif/exif-data.h", "c++", autoadd=0):
-            print "Error: libexif is missing"
+            print("Error: libexif is missing")
             Exit(1)
 
         if not conf.CheckLibWithHeader("sqlite3", "sqlite3.h", "c++", autoadd=0):
-            print "Error: sqlite3 is missing"
+            print("Error: sqlite3 is missing")
             Exit(1)
 
         if not conf.CheckLib("jpeg", autoadd=0):
-            print "Error: libjpeg is missing"
+            print("Error: libjpeg is missing")
             Exit(1)
 
         if not conf.CheckLibWithHeader("GL", "GL/gl.h", "c++", autoadd=0):
-            print "Error: libGL is missing"
+            print("Error: libGL is missing")
             Exit(1)
 
         if not conf.CheckLibWithHeader("GLEW", "GL/glew.h", "c++", autoadd=0):
-            print "Error: libGLEW is missing"
+            print("Error: libGLEW is missing")
             Exit(1)
 
         self.env = conf.Finish()
@@ -117,7 +117,7 @@ class Project:
         opts.Update(self.env)
 
         self.configure()
-        
+
         self.build_libgalapix();
 
         if self.env['GALAPIX_SDL']:
@@ -140,14 +140,14 @@ class Project:
         self.libgalapix_env.ParseConfig('sdl-config --cflags --libs | sed "s/-I/-isystem/g"')
         self.libgalapix_env.ParseConfig('Magick++-config --libs --cppflags | sed "s/-I/-isystem/g"')
         self.libgalapix_env.ParseConfig('pkg-config --cflags --libs libcurl | sed "s/-I/-isystem/g"')
-        
+
         self.libgalapix_util = self.libgalapix_env.StaticLibrary('galapix_util',
                                                                  Glob("src/util/*.cpp") + \
                                                                  Glob("src/plugins/*.cpp") + \
                                                                  Glob("src/lisp/*.cpp") + \
                                                                  Glob("src/math/*.cpp"))
-        
-        self.libgalapix = self.libgalapix_env.StaticLibrary('galapix.sdl', 
+
+        self.libgalapix = self.libgalapix_env.StaticLibrary('galapix.sdl',
                                                             Glob("src/database/*.cpp") + \
                                                             Glob("src/display/*.cpp") + \
                                                             Glob("src/galapix/*.cpp") + \
@@ -166,7 +166,7 @@ class Project:
         sdl_env.ParseConfig('sdl-config --cflags --libs | sed "s/-I/-isystem/g"')
         sdl_env.ParseConfig('Magick++-config --libs --cppflags | sed "s/-I/-isystem/g"')
         sdl_env.ParseConfig('pkg-config --cflags --libs libcurl | sed "s/-I/-isystem/g"')
-        sdl_env.Program('galapix.sdl', 
+        sdl_env.Program('galapix.sdl',
                         ['src/sdl/sdl_framebuffer.cpp',
                          'src/sdl/sdl_viewer.cpp'] + \
                         self.galapix_sources + \
@@ -184,7 +184,7 @@ class Project:
         gtk_env.ParseConfig('Magick++-config --libs --cppflags | sed "s/-I/-isystem/g"')
         gtk_env.ParseConfig('pkg-config --cflags --libs libcurl | sed "s/-I/-isystem/g"')
         gtk_env.ParseConfig('pkg-config --cflags --libs gtkmm-2.4 libglademm-2.4 gtkglextmm-1.2 | sed "s/-I/-isystem/g"')
-        gtk_env.Program('galapix.gtk', 
+        gtk_env.Program('galapix.gtk',
                         ['src/gtk/gtk_viewer.cpp',
                          'src/gtk/gtk_viewer_widget.cpp'] + \
                         self.galapix_sources + \
@@ -201,7 +201,7 @@ class Project:
         libgalapix_extra_apps_env.Append(LIBS=self.libgalapix_util)
         for filename in Glob("extra/*.cpp", strings=True):
             libgalapix_extra_apps_env.Program(filename[:-4], filename)
-            
+
 project = Project()
 project.build()
 
