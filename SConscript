@@ -102,17 +102,17 @@ class Project:
         self.env = conf.Finish()
 
     def build(self):
-        self.env = Environment(ENV = {'PATH' : os.environ['PATH'],
-                                      'HOME' : os.environ['HOME']},
+        self.env = Environment(ENV = os.environ,
                                CPPPATH=['src'])
 
         opts = Variables(['custom.py'], ARGUMENTS)
         opts.Add('CXX', 'C++ Compiler')
+        opts.Add('CXXFLAGS', 'C++ Compiler Flags')
         opts.Add('BUILD', 'Build type: release, profile, debug, development')
         opts.Add(BoolVariable("GALAPIX_SDL", "Build galapix.sdl", True))
-        opts.Add(BoolVariable("GALAPIX_GTK", "Build galapix.gtk", True))
+        opts.Add(BoolVariable("GALAPIX_GTK", "Build galapix.gtk", False))
         opts.Add(BoolVariable("BUILD_TESTS", "Build tests", False))
-        opts.Add(BoolVariable('BUILD_EXTRA_APPS', "Build extra apps", True))
+        opts.Add(BoolVariable('BUILD_EXTRA_APPS', "Build extra apps", False))
         Help(opts.GenerateHelpText(self.env))
         opts.Update(self.env)
 
