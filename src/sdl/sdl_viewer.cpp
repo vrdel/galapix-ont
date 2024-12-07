@@ -54,7 +54,7 @@ SDLViewer::SDLViewer(const Size& geometry, bool fullscreen, int  anti_aliasing,
     log_error << "Unable to initialize SDL: " << SDL_GetError() << std::endl;
     exit(1);
   }
-  atexit(SDL_Quit); 
+  atexit(SDL_Quit);
 
   SDLFramebuffer::set_video_mode(geometry, fullscreen, anti_aliasing, title);
 }
@@ -84,7 +84,7 @@ SDLViewer::process_event(const SDL_Event& event)
           case SPNAV_EVENT_MOTION:
           {
             if (0)
-              log_debug << "MotionEvent: " 
+              log_debug << "MotionEvent: "
                         << "("
                         << spnav_ev->motion.x << ", "
                         << spnav_ev->motion.y << ", "
@@ -93,7 +93,7 @@ SDLViewer::process_event(const SDL_Event& event)
                         << spnav_ev->motion.rx << ", "
                         << spnav_ev->motion.ry << ", "
                         << spnav_ev->motion.rz
-                        << std::endl;              
+                        << std::endl;
 
             float factor = static_cast<float>(-abs(spnav_ev->motion.y))/10000.0f;
 
@@ -109,7 +109,7 @@ SDLViewer::process_event(const SDL_Event& event)
               m_viewer.get_state().rotate(static_cast<float>(spnav_ev->motion.ry) / 200.0f);
           }
           break;
-            
+
           case SPNAV_EVENT_BUTTON:
             if (0)
               std::cout << "ButtonEvent: " << spnav_ev->button.press << spnav_ev->button.bnum << std::endl;
@@ -159,7 +159,7 @@ SDLViewer::process_event(const SDL_Event& event)
         case SDL_BUTTON_WHEELUP:
           m_viewer.get_state().zoom(1.1f, Vector2i(event.button.x, event.button.y));
           break;
-              
+
         case SDL_BUTTON_WHEELDOWN:
           m_viewer.get_state().zoom(1.0f/1.1f, Vector2i(event.button.x, event.button.y));
           break;
@@ -187,8 +187,12 @@ SDLViewer::process_event(const SDL_Event& event)
         case SDLK_ESCAPE:
           m_quit = true;
           break;
-              
+
         case SDLK_d:
+          m_viewer.zoom_to_selection();
+          break;
+
+        case SDLK_x:
           m_viewer.zoom_to_selection();
           break;
 
@@ -199,7 +203,6 @@ SDLViewer::process_event(const SDL_Event& event)
         case SDLK_KP_MINUS:
           m_viewer.get_state().zoom(1.0f/1.25f);
           break;
-        */
 
         case SDLK_p:
           m_viewer.set_pan_tool();
@@ -212,7 +215,7 @@ SDLViewer::process_event(const SDL_Event& event)
         case SDLK_k:
           m_viewer.cleanup_cache();
           break;
-        
+
         case SDLK_z:
           m_viewer.set_zoom_tool();
           break;
@@ -255,7 +258,7 @@ SDLViewer::process_event(const SDL_Event& event)
             }
           }
         }
-        break;              
+        break;
 
         case SDLK_i:
           m_viewer.isolate_selection();
@@ -275,15 +278,15 @@ SDLViewer::process_event(const SDL_Event& event)
 
         case SDLK_F7:
           m_viewer.decrease_brightness();
-          break;        
+          break;
 
         case SDLK_F8:
           m_viewer.increase_contrast();
-          break;        
+          break;
 
         case SDLK_F9:
           m_viewer.decrease_contrast();
-          break;        
+          break;
 
         case SDLK_F10:
           m_viewer.reset_gamma();
@@ -340,7 +343,7 @@ SDLViewer::process_event(const SDL_Event& event)
         case SDLK_F3:
           m_viewer.save();
           break;
-                
+
         case SDLK_c:
           m_viewer.clear_cache();
           break;
@@ -348,7 +351,7 @@ SDLViewer::process_event(const SDL_Event& event)
         case SDLK_F5:
           m_viewer.refresh_selection();
           break;
-          
+
         case SDLK_t:
           m_viewer.toggle_trackball_mode();
           break;
@@ -382,7 +385,7 @@ SDLViewer::process_event(const SDL_Event& event)
         case SDLK_SPACE:
           m_viewer.print_images();
           break;
-              
+
         case SDLK_l:
           m_viewer.print_state();
           break;
@@ -399,7 +402,7 @@ SDLViewer::process_event(const SDL_Event& event)
 
     case SDL_KEYUP:
       m_viewer.on_key_up(event.key.keysym.sym);
-      break;                
+      break;
 
     default:
       break;
@@ -417,7 +420,7 @@ SDLViewer::run()
 #endif
 
   while(!m_quit)
-  {     
+  {
     if (m_viewer.is_active())
     {
       SDL_Event event;
@@ -521,7 +524,7 @@ SDLViewer::run()
 
       // FIXME: We should try to detect if we need a redraw and
       // only draw then, else we will redraw on each mouse motion
-      m_viewer.draw();          
+      m_viewer.draw();
       ticks = SDL_GetTicks();
     }
 

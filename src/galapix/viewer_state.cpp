@@ -17,7 +17,7 @@
 */
 
 #include "galapix/viewer_state.hpp"
-
+#include "util/log.hpp"
 #include "display/framebuffer.hpp"
 
 ViewerState::ViewerState()
