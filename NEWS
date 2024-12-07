@@ -1,0 +1,69 @@
+Galapix 0.1.3 (??. Oct 2009)
+============================
+
+* some general code cleanup
+* mandelbrot set generation support
+* faster loading by combining FileEntry and Tile generation
+* flexible file format support
+
+
+Galapix 0.1.2 (25. Oct 2009)
+============================
+
+* fixed issue with newly generated images not showing up properly
+* added automatic check for libspnav
+* added proper configuration variables to build script
+
+
+Galapix 0.1.1 (24. Oct 2009)
+============================
+
+* EXIF support
+* Zoomify support
+* available thumbnails are now loaded directly at startup, instead of
+  dynamically later on
+* FileEntry and TileEntry generation has been merged to allow faster
+  loading
+* image refresh on F5 has been fixed
+
+
+Galapix 0.1.0 (17. Oct 2009)
+============================
+
+* database layout has changed
+* switched to boost::thread
+* added an incomplete Gtk based GUI
+* added OpenGL anti-aliasing (--anti-aliasing N)
+* added toggling of the background color
+* added a flexible grid overlay tool
+* support for SVG via RSVG
+* support for RAW images via UFRaw
+* support for PNG images via libpng
+* support for ImageMagick via Magick++
+* support for Gimp/XCF via xcftools
+* support for Krita/KRA via koconvert
+* support for RGBA tiles
+* support for zip archive files 
+* support for rar archive files 
+* support for http/ftp via libcurl
+
+
+Galapix 0.0.3 (12. Sep 2008)
+============================
+
+* fixes for gcc 4.3
+* added random layout function
+* added random shuffle
+* added function to create non-overlapping layouts  
+* scale is smoothly handled on relayout
+* added MoveTool to move and scale images
+* fixed random halting of the application
+
+
+Galapix 0.0.2 (4. Sep 2008)
+===========================
+
+* initial release
+
+
+# EOF #
