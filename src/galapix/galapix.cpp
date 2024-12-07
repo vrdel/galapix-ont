@@ -145,7 +145,7 @@ void
 Galapix::export_images(const std::string& database, const std::vector<URL>& url)
 {
   Database db(database);
-  
+
   int wish_size = 512;
   int image_num = 0;
   for(std::vector<URL>::const_iterator i = url.begin(); i != url.end(); ++i)
@@ -201,13 +201,13 @@ Galapix::downscale(const std::vector<URL>& url)
     blob->write_to_file(out.str());
 
     std::cout << "Wrote: " << out.str() << std::endl;
-  }  
+  }
 }
 
 void
 Galapix::cleanup(const std::string& database)
 {
-  Database db(database); 
+  Database db(database);
   std::cout << "Running database cleanup routines, this process can take multiple minutes." << std::endl;
   std::cout << "You can interrupt it via Ctrl-c, which won't do harm, but will throw away all the cleanup work done till that point" << std::endl;
   db.cleanup();
@@ -235,7 +235,7 @@ Galapix::list(const Options& opts)
   for(std::vector<FileEntry>::iterator i = entries.begin(); i != entries.end(); ++i)
   {
     std::cout << i->get_url() << std::endl;
-  }  
+  }
 }
 
 void
@@ -437,7 +437,7 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
     std::cout << std::endl;
   }
 
-  job_manager.start_thread();  
+  job_manager.start_thread();
   database_thread.start_thread();
 
 #ifdef GALAPIX_SDL
@@ -492,6 +492,7 @@ Galapix::print_usage()
             << "  -p, --pattern GLOB     Select files from the database via globbing pattern\n"
             << "  -g, --geometry WxH     Start with window size WxH\n"
             << "  -a, --anti-aliasing N  Anti-aliasing factor 0,2,4 (default: 0)\n"
+            << "  -t, --title STRING     Set window title"
             << "\n"
             << "Compiled Fetures:\n"
 #ifdef HAVE_SPACE_NAVIGATOR
@@ -501,7 +502,7 @@ Galapix::print_usage()
 #endif
             << std::endl;
 }
-  
+
 int
 Galapix::main(int argc, char** argv)
 {
