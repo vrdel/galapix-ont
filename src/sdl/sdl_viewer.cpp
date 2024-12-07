@@ -212,9 +212,11 @@ SDLViewer::process_event(const SDL_Event& event)
           m_viewer.set_pan_tool();
           break;
 
+        /*
         case SDLK_r:
           m_viewer.set_move_rotate_tool();
           break;
+        */
 
         case SDLK_k:
           m_viewer.cleanup_cache();

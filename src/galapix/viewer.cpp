@@ -278,10 +278,12 @@ Viewer::on_key_up(int key)
       keyboard_zoom_in_tool->up(m_mouse_pos);
       break;
 
+    /*
     case SDLK_RSHIFT:
     case SDLK_LSHIFT:
       keyboard_view_rotate_tool->up(m_mouse_pos);
       break;
+   */
   }
 }
 
@@ -298,10 +300,12 @@ Viewer::on_key_down(int key)
       keyboard_zoom_in_tool->down(m_mouse_pos);
       break;
 
+    /*
     case SDLK_RSHIFT:
     case SDLK_LSHIFT:
       keyboard_view_rotate_tool->down(m_mouse_pos);
       break;
+    */
   }
 }
 
