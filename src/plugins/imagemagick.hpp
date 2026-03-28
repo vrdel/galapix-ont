@@ -32,6 +32,7 @@ public:
   static bool get_size(const std::string& filename, Size& size);
   static SoftwareSurfacePtr load_from_file(const std::string& filename);
   static SoftwareSurfacePtr load_from_mem(void* data, int len);
+  static SoftwareSurfacePtr render_label(const std::string& text, int font_size);
   static std::vector<std::string> get_supported_extensions();
 };
 

@@ -30,6 +30,10 @@
 
 using namespace MagickCore;
 
+static
+SoftwareSurfacePtr
+MagickImage2SoftwareSurface(const Magick::Image& image);
+
 bool
 Imagemagick::get_size(const std::string& filename, Size& size)
 {
@@ -95,6 +99,26 @@ Imagemagick::get_supported_extensions()
   }
 }
 
+SoftwareSurfacePtr
+Imagemagick::render_label(const std::string& text, int font_size)
+{
+  if (text.empty())
+  {
+    return SoftwareSurfacePtr();
+  }
+
+  Magick::Image image;
+  image.backgroundColor(Magick::Color("black"));
+  image.fillColor(Magick::Color("white"));
+  image.strokeColor(Magick::Color("transparent"));
+  image.font("DejaVu-Sans");
+  image.fontPointsize(font_size);
+  image.textEncoding("UTF-8");
+  image.read("label:" + text);
+
+  return MagickImage2SoftwareSurface(image);
+}
+
 static
 SoftwareSurfacePtr
 MagickImage2SoftwareSurface(const Magick::Image& image)
@@ -124,10 +148,10 @@ MagickImage2SoftwareSurface(const Magick::Image& image)
 
       for(int x = 0; x < width; ++x)
       {
-        dst_pixels[4*x + 0] = static_cast<uint8_t>(src_pixels[x].red)   >> shift;
-        dst_pixels[4*x + 1] = static_cast<uint8_t>(src_pixels[x].green) >> shift;
-        dst_pixels[4*x + 2] = static_cast<uint8_t>(src_pixels[x].blue)  >> shift;
-        dst_pixels[4*x + 3] = static_cast<uint8_t>(255 - src_pixels[x].opacity) >> shift;
+        dst_pixels[4*x + 0] = static_cast<uint8_t>(src_pixels[x].red   >> shift);
+        dst_pixels[4*x + 1] = static_cast<uint8_t>(src_pixels[x].green >> shift);
+        dst_pixels[4*x + 2] = static_cast<uint8_t>(src_pixels[x].blue  >> shift);
+        dst_pixels[4*x + 3] = static_cast<uint8_t>((QuantumRange - src_pixels[x].opacity) >> shift);
       }
     }
   }
@@ -142,9 +166,9 @@ MagickImage2SoftwareSurface(const Magick::Image& image)
 
       for(int x = 0; x < width; ++x)
       {
-        dst_pixels[3*x + 0] = static_cast<uint8_t>(src_pixels[x].red)   >> shift;
-        dst_pixels[3*x + 1] = static_cast<uint8_t>(src_pixels[x].green) >> shift;
-        dst_pixels[3*x + 2] = static_cast<uint8_t>(src_pixels[x].blue)  >> shift;
+        dst_pixels[3*x + 0] = static_cast<uint8_t>(src_pixels[x].red   >> shift);
+        dst_pixels[3*x + 1] = static_cast<uint8_t>(src_pixels[x].green >> shift);
+        dst_pixels[3*x + 2] = static_cast<uint8_t>(src_pixels[x].blue  >> shift);
       }
     }
   }

@@ -73,6 +73,20 @@ Workspace::get_images(const Rectf& rect) const
   return result;
 }
 
+ImageCollection
+Workspace::get_visible_images(const Rectf& rect) const
+{
+  ImageCollection result;
+  for(ImageCollection::const_iterator i = m_images.begin(); i != m_images.end(); ++i)
+  {
+    if ((*i)->get_image_rect().is_overlapped(rect))
+    {
+      result.add(*i);
+    }
+  }
+  return result;
+}
+
 ImagePtr
 Workspace::get_image(const Vector2f& pos) const
 {

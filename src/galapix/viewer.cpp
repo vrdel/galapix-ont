@@ -17,7 +17,9 @@
 */
 
 #include <SDL.h>
+#include <algorithm>
 #include <fstream>
+#include <map>
 #include <boost/format.hpp>
 
 #include "display/framebuffer.hpp"
@@ -35,11 +37,127 @@
 #include "tools/view_rotate_tool.hpp"
 #include "tools/zoom_rect_tool.hpp"
 #include "tools/zoom_tool.hpp"
+#include "plugins/imagemagick.hpp"
 #include "util/filesystem.hpp"
 #include "util/log.hpp"
 #include "util/software_surface.hpp"
 
 Viewer* Viewer::current_ = 0;
+
+namespace {
+const int kOverlayFontSize = 16;
+const int kOverlayCharWidth = 10;
+const int kOverlayHorizontalPadding = 8;
+const int kOverlayGap = 1;
+
+Rectf
+world_to_screen(const ViewerState& state, const Rectf& rect)
+{
+  return Rectf(rect.left   * state.get_scale() + state.get_offset().x,
+               rect.top    * state.get_scale() + state.get_offset().y,
+               rect.right  * state.get_scale() + state.get_offset().x,
+               rect.bottom * state.get_scale() + state.get_offset().y);
+}
+
+std::string
+basename_or_url(const Image& image)
+{
+  const URL url = image.get_url();
+  std::string value = url.has_stdio_name() ? url.get_stdio_name() : url.str();
+  std::string::size_type pos = value.find_last_of("/:");
+  if (pos != std::string::npos)
+  {
+    value = value.substr(pos + 1);
+  }
+  return value;
+}
+
+std::string
+fit_label(const std::string& label, int max_chars)
+{
+  if (max_chars <= 0)
+  {
+    return std::string();
+  }
+  else if (static_cast<int>(label.size()) <= max_chars)
+  {
+    return label;
+  }
+  else if (max_chars <= 3)
+  {
+    return label.substr(0, static_cast<std::string::size_type>(max_chars));
+  }
+  else
+  {
+    return label.substr(0, static_cast<std::string::size_type>(max_chars - 3)) + "...";
+  }
+}
+
+SurfacePtr
+get_label_surface(const std::string& text)
+{
+  static std::map<std::string, SurfacePtr> cache;
+
+  std::map<std::string, SurfacePtr>::iterator found = cache.find(text);
+  if (found != cache.end())
+  {
+    return found->second;
+  }
+
+  SoftwareSurfacePtr text_surface = Imagemagick::render_label(text, kOverlayFontSize);
+  if (!text_surface)
+  {
+    return SurfacePtr();
+  }
+
+  SurfacePtr surface = Surface::create(text_surface);
+  cache[text] = surface;
+  return surface;
+}
+
+void
+draw_filename_overlay(const ViewerState& state, const ImageCollection& images)
+{
+  if (state.get_angle() != 0.0f)
+  {
+    return;
+  }
+
+  const Rectf screen_bounds(0.0f, 0.0f,
+                            static_cast<float>(Framebuffer::get_width()),
+                            static_cast<float>(Framebuffer::get_height()));
+
+  for(ImageCollection::const_iterator i = images.begin(); i != images.end(); ++i)
+  {
+    Rectf image_rect = world_to_screen(state, (*i)->get_image_rect());
+    if (!image_rect.is_overlapped(screen_bounds))
+    {
+      continue;
+    }
+
+    const int stripe_width = static_cast<int>(image_rect.get_width());
+    if (stripe_width < (kOverlayCharWidth + kOverlayHorizontalPadding))
+    {
+      continue;
+    }
+
+    const int max_chars = std::max(0, (stripe_width - kOverlayHorizontalPadding) / kOverlayCharWidth);
+    const std::string label = fit_label(basename_or_url(**i), max_chars);
+    if (label.empty())
+    {
+      continue;
+    }
+
+    SurfacePtr label_surface = get_label_surface(label);
+    if (label_surface)
+    {
+      const float stripe_top = image_rect.top - static_cast<float>(label_surface->get_height() + kOverlayGap);
+      label_surface->draw(Vector2f(image_rect.left, stripe_top));
+    }
+  }
+}
+
+} // namespace
 
 Viewer::Viewer(Workspace* workspace_) :
   m_workspace(workspace_),
@@ -183,6 +301,8 @@ Viewer::draw()
   right_tool->draw();
 
   glPopMatrix();
+
+  draw_filename_overlay(m_state, m_workspace->get_visible_images(cliprect));
 
   if (m_draw_grid)
   {
