@@ -42,16 +42,8 @@ RegularLayouter::layout(const ImageCollection& images, bool animated)
 
       images[i]->set_target_scale(target_scale);
 
-      if ((i/w) % 2 == 0)
-      {
-        images[i]->set_target_pos(Vector2f(static_cast<float>(i % w) * 1024.0f,
-                                           static_cast<float>(i / w) * 1024.0f));
-      }
-      else
-      {
-        images[i]->set_target_pos(Vector2f(static_cast<float>(w - (i % w)-1) * 1024.0f,
-                                           static_cast<float>(i / w)         * 1024.0f));
-      }
+      images[i]->set_target_pos(Vector2f(static_cast<float>(i % w) * 1024.0f,
+                                         static_cast<float>(i / w) * 1024.0f));
     }
   }
 }
