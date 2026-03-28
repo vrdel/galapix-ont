@@ -157,7 +157,7 @@ draw_filename_overlay(const ViewerState& state, const ImageCollection& images)
 
 } // namespace
 
-Viewer::Viewer(Workspace* workspace_) :
+Viewer::Viewer(Workspace* workspace_, bool show_filenames) :
   m_workspace(workspace_),
   m_mark_for_redraw(false),
   m_state(),
@@ -178,7 +178,8 @@ Viewer::Viewer(Workspace* workspace_) :
   m_background_colors(),
   m_grid_offset(0.0f, 0.0f),
   m_grid_size(400.0f, 300.0f),
-  m_grid_color(255, 0, 0, 255)
+  m_grid_color(255, 0, 0, 255),
+  m_show_filenames(show_filenames)
 {
   current_ = this;
 
@@ -290,7 +291,10 @@ Viewer::draw()
 
   glPopMatrix();
 
-  draw_filename_overlay(m_state, m_workspace->get_visible_images(cliprect));
+  if (m_show_filenames)
+  {
+    draw_filename_overlay(m_state, m_workspace->get_visible_images(cliprect));
+  }
 }
 
 void

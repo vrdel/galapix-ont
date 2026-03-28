@@ -431,7 +431,7 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
   database_thread.start_thread();
 
 #ifdef GALAPIX_SDL
-  Viewer viewer(&workspace);
+  Viewer viewer(&workspace, opts.show_filenames);
   SDLViewer sdl_viewer(geometry, fullscreen, anti_aliasing, viewer, title);
   viewer.sort_image_list();
   viewer.layout_tight();
@@ -477,6 +477,7 @@ Galapix::print_usage()
             << "  -p, --pattern GLOB     Select files from the database via globbing pattern\n"
             << "  -g, --geometry WxH     Start with window size WxH\n"
             << "  -a, --anti-aliasing N  Anti-aliasing factor 0,2,4 (default: 0)\n"
+            << "      --show-filenames   Show image filenames above visible images\n"
             << "  -r, --title STRING     Set window title"
             << std::endl;
 }
@@ -688,6 +689,10 @@ Galapix::parse_args(int argc, char** argv, Options& opts)
                strcmp(argv[i], "-f") == 0)
       {
         fullscreen = true;
+      }
+      else if (strcmp(argv[i], "--show-filenames") == 0)
+      {
+        opts.show_filenames = true;
       }
       else if (strcmp(argv[i], "--title") == 0)
       {

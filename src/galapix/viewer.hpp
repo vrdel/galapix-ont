@@ -75,9 +75,10 @@ private:
   Vector2f m_grid_offset;
   Sizef    m_grid_size;
   RGBA     m_grid_color;
+  bool m_show_filenames;
 
 public:
-  Viewer(Workspace* workspace);
+  Viewer(Workspace* workspace, bool show_filenames = false);
 
   void draw();
   void update(float delta);
