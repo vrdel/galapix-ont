@@ -157,7 +157,7 @@ draw_filename_overlay(const ViewerState& state, const ImageCollection& images)
 
 } // namespace
 
-Viewer::Viewer(Workspace* workspace_, bool show_filenames) :
+Viewer::Viewer(Workspace* workspace_, bool show_filenames, float spacing_factor) :
   m_workspace(workspace_),
   m_mark_for_redraw(false),
   m_state(),
@@ -179,7 +179,8 @@ Viewer::Viewer(Workspace* workspace_, bool show_filenames) :
   m_grid_offset(0.0f, 0.0f),
   m_grid_size(400.0f, 300.0f),
   m_grid_color(255, 0, 0, 255),
-  m_show_filenames(show_filenames)
+  m_show_filenames(show_filenames),
+  m_spacing_factor(spacing_factor)
 {
   current_ = this;
 
@@ -461,14 +462,16 @@ void
 Viewer::layout_auto()
 {
   m_workspace->layout_aspect(static_cast<float>(Framebuffer::get_width()),
-                             static_cast<float>(Framebuffer::get_height()));
+                             static_cast<float>(Framebuffer::get_height()),
+                             m_spacing_factor);
 }
 
 void
 Viewer::layout_tight()
 {
   m_workspace->layout_tight(static_cast<float>(Framebuffer::get_width()),
-                            static_cast<float>(Framebuffer::get_height()));
+                            static_cast<float>(Framebuffer::get_height()),
+                            m_spacing_factor);
 }
 
 void

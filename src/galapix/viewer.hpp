@@ -76,9 +76,10 @@ private:
   Sizef    m_grid_size;
   RGBA     m_grid_color;
   bool m_show_filenames;
+  float m_spacing_factor;
 
 public:
-  Viewer(Workspace* workspace, bool show_filenames = false);
+  Viewer(Workspace* workspace, bool show_filenames = false, float spacing_factor = 1.0f);
 
   void draw();
   void update(float delta);

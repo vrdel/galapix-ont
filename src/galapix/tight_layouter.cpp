@@ -21,16 +21,17 @@
 #include "galapix/image.hpp"
 #include "galapix/image_collection.hpp"
 
-TightLayouter::TightLayouter(float w, float h) :
+TightLayouter::TightLayouter(float w, float h, float spacing_factor) :
   m_aspect_w(w),
-  m_aspect_h(h)
+  m_aspect_h(h),
+  m_spacing_factor(spacing_factor)
 {
 }
 
 void
 TightLayouter::layout(const ImageCollection& images, bool animated)
 {
-  float spacing = 24.0f;
+  const float spacing = 40.0f * m_spacing_factor;
 
   float width = 0;  
   // calculate the total width 

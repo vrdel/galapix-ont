@@ -154,10 +154,10 @@ Workspace::layout_vertical()
 }
 
 void
-Workspace::layout_aspect(float aspect_w, float aspect_h)
+Workspace::layout_aspect(float aspect_w, float aspect_h, float spacing_factor)
 {
   log_info << std::endl;
-  m_layouter.reset(new RegularLayouter(aspect_w, aspect_h));
+  m_layouter.reset(new RegularLayouter(aspect_w, aspect_h, spacing_factor));
   m_layouter->layout(m_images, true);
   start_animation();
 }
@@ -172,10 +172,10 @@ Workspace::layout_spiral()
 }
 
 void
-Workspace::layout_tight(float aspect_w, float aspect_h)
+Workspace::layout_tight(float aspect_w, float aspect_h, float spacing_factor)
 {
   log_info << std::endl;
-  m_layouter.reset(new TightLayouter(aspect_w, aspect_h));
+  m_layouter.reset(new TightLayouter(aspect_w, aspect_h, spacing_factor));
   m_layouter->layout(m_images, true);
   start_animation();
 }

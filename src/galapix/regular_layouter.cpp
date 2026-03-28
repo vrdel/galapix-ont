@@ -22,9 +22,10 @@
 #include "galapix/image.hpp"
 #include "math/math.hpp"
 
-RegularLayouter::RegularLayouter(float aspect_w, float aspect_h) :
+RegularLayouter::RegularLayouter(float aspect_w, float aspect_h, float spacing_factor) :
   m_aspect_w(aspect_w),
-  m_aspect_h(aspect_h)
+  m_aspect_h(aspect_h),
+  m_spacing_factor(spacing_factor)
 {
 }
 
@@ -33,6 +34,8 @@ RegularLayouter::layout(const ImageCollection& images, bool animated)
 {
   if (!images.empty())
   {
+    const float spacing = 40.0f * m_spacing_factor;
+    const float step = 1000.0f + spacing;
     int w = int(Math::sqrt(m_aspect_w * static_cast<float>(images.size()) / m_aspect_h));
       
     for(int i = 0; i < int(images.size()); ++i)
@@ -42,8 +45,8 @@ RegularLayouter::layout(const ImageCollection& images, bool animated)
 
       images[i]->set_target_scale(target_scale);
 
-      images[i]->set_target_pos(Vector2f(static_cast<float>(i % w) * 1024.0f,
-                                         static_cast<float>(i / w) * 1024.0f));
+      images[i]->set_target_pos(Vector2f(static_cast<float>(i % w) * step,
+                                         static_cast<float>(i / w) * step));
     }
   }
 }

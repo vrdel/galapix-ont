@@ -26,9 +26,10 @@ class RegularLayouter : public Layouter
 private:
   float m_aspect_w;
   float m_aspect_h;
+  float m_spacing_factor;
 
 public:
-  RegularLayouter(float aspect_w, float aspect_h);
+  RegularLayouter(float aspect_w, float aspect_h, float spacing_factor = 1.0f);
 
   void layout(const ImageCollection& images, bool animated);
 

@@ -431,7 +431,7 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
   database_thread.start_thread();
 
 #ifdef GALAPIX_SDL
-  Viewer viewer(&workspace, opts.show_filenames);
+  Viewer viewer(&workspace, opts.show_filenames, static_cast<float>(opts.spacing));
   SDLViewer sdl_viewer(geometry, fullscreen, anti_aliasing, viewer, title);
   viewer.sort_image_list();
   viewer.layout_tight();
@@ -477,6 +477,7 @@ Galapix::print_usage()
             << "  -p, --pattern GLOB     Select files from the database via globbing pattern\n"
             << "  -g, --geometry WxH     Start with window size WxH\n"
             << "  -a, --anti-aliasing N  Anti-aliasing factor 0,2,4 (default: 0)\n"
+            << "      --spacing N        Layout spacing factor (1=current, 2=double, ...)\n"
             << "      --show-filenames   Show image filenames above visible images\n"
             << "  -r, --title STRING     Set window title"
             << std::endl;
@@ -689,6 +690,22 @@ Galapix::parse_args(int argc, char** argv, Options& opts)
                strcmp(argv[i], "-f") == 0)
       {
         fullscreen = true;
+      }
+      else if (strcmp(argv[i], "--spacing") == 0)
+      {
+        ++i;
+        if (i < argc)
+        {
+          opts.spacing = atoi(argv[i]);
+          if (opts.spacing < 1)
+          {
+            throw std::runtime_error("--spacing requires an integer >= 1");
+          }
+        }
+        else
+        {
+          throw std::runtime_error(std::string(argv[i-1]) + " requires an argument");
+        }
       }
       else if (strcmp(argv[i], "--show-filenames") == 0)
       {

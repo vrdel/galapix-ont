@@ -25,6 +25,7 @@ public:
   std::string database;
   std::vector<std::string> patterns;
   int         threads;
+  int         spacing;
   bool        show_filenames;
   std::vector<std::string> rest;
   std::string title;
@@ -33,6 +34,7 @@ public:
     database(),
     patterns(),
     threads(),
+    spacing(1),
     show_filenames(false),
     title(),
     rest()
