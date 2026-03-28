@@ -56,9 +56,6 @@
 #ifdef GALAPIX_SDL
 #  include "sdl/sdl_viewer.hpp"
 #endif
-#ifdef GALAPIX_GTK
-#  include "gtk/gtk_viewer.hpp"
-#endif
 
 Galapix::Galapix()
   : fullscreen(false),
@@ -450,12 +447,6 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
   sdl_viewer.run();
 #endif
 
-#ifdef GALAPIX_GTK
-  GtkViewer gtk_viewer;
-  gtk_viewer.set_workspace(&workspace);
-  gtk_viewer.run();
-#endif
-
   job_manager.abort_thread();
   database_thread.abort_thread();
 
@@ -541,11 +532,7 @@ Galapix::run(const Options& opts)
 
   if (opts.rest.empty())
   {
-#ifdef GALAPIX_SDL
     print_usage();
-#else
-    view(opts, std::vector<URL>());
-#endif
   }
   else
   {

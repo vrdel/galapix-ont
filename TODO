@@ -4,10 +4,6 @@ _______________________________________________________________________________
 Release procedure:
 ==================
 
-* test that Galapix works with and without SpaceNavigator libraries
-
-* test that all Galapix functions are accessible without SpaceNavigator
-
 * test that mouse wheel is supported
 
 * test svn trunk a lot
@@ -384,7 +380,6 @@ VACUUM;
   because it might depend on the file extension to figure out a type
   (theoretical, don't think any app needs that at the moment)
 
-* make SpaceNavigator a seperate thread, do not poll events, but wait
   for them, use SDL_PushEvent to push data as user event
 
 * write grid traversal thing so that we can detect the tiles to draw even on scaled or rotated images

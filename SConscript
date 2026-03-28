@@ -103,7 +103,6 @@ class Project:
         opts.Add('CXXFLAGS', 'C++ Compiler Flags')
         opts.Add('BUILD', 'Build type: release, profile, debug, development')
         opts.Add(BoolVariable("GALAPIX_SDL", "Build galapix.sdl", True))
-        opts.Add(BoolVariable("GALAPIX_GTK", "Build galapix.gtk", False))
         opts.Add(BoolVariable("BUILD_TESTS", "Build tests", False))
         opts.Add(BoolVariable('BUILD_EXTRA_APPS', "Build extra apps", False))
         Help(opts.GenerateHelpText(self.env))
@@ -115,9 +114,6 @@ class Project:
 
         if self.env['GALAPIX_SDL']:
             self.build_galapix_sdl()
-
-        if self.env['GALAPIX_GTK']:
-            self.build_galapix_gtk()
 
         if self.env['BUILD_TESTS']:
             self.build_tests()
@@ -165,23 +161,6 @@ class Project:
                         self.galapix_sources + \
                         self.optional_sources)
 
-
-    def build_galapix_gtk(self):
-        gtk_env = self.env.Clone()
-        gtk_env.Append(CPPDEFINES = ['GALAPIX_GTK'] + self.optional_defines,
-                       LIBS = [self.libgalapix, self.libgalapix_util,
-                               'GL', 'GLEW', 'sqlite3', 'jpeg', 'exif', 'boost_filesystem', 'boost_thread'] + self.optional_libs,
-                       OBJPREFIX="gtk.")
-        gtk_env.ParseConfig('pkg-config --cflags --libs libpng | sed "s/-I/-isystem/g"')
-        gtk_env.ParseConfig('pkg-config --cflags --libs sdl | sed "s/-I/-isystem/g"')
-        gtk_env.ParseConfig('pkg-config --cflags --libs Magick++ | sed "s/-I/-isystem/g"')
-        gtk_env.ParseConfig('pkg-config --cflags --libs libcurl | sed "s/-I/-isystem/g"')
-        gtk_env.ParseConfig('pkg-config --cflags --libs gtkmm-2.4 libglademm-2.4 gtkglextmm-1.2 | sed "s/-I/-isystem/g"')
-        gtk_env.Program('galapix.gtk',
-                        ['src/gtk/gtk_viewer.cpp',
-                         'src/gtk/gtk_viewer_widget.cpp'] + \
-                        self.galapix_sources + \
-                        self.optional_sources)
 
     def build_tests(self):
         libgalapix_test_env = self.libgalapix_env.Clone()

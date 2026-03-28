@@ -11,7 +11,6 @@ Galapix 0.1.2 (25. Oct 2009)
 ============================
 
 * fixed issue with newly generated images not showing up properly
-* added automatic check for libspnav
 * added proper configuration variables to build script
 
 
