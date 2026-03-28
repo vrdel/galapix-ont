@@ -299,10 +299,6 @@ Filesystem::generate_image_file_list(const std::string& pathname, std::vector<UR
         {
           file_list.push_back(url);
         }
-        else if (url.get_protocol() == "buildin")
-        {
-          file_list.push_back(url);
-        }
         else if (SoftwareSurfaceFactory::current().has_supported_extension(url))
         {
           file_list.push_back(url);

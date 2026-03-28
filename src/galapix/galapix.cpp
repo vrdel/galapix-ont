@@ -35,7 +35,6 @@
 #include "galapix/options.hpp"
 #include "galapix/viewer.hpp"
 #include "galapix/workspace.hpp"
-#include "galapix/mandelbrot_tile_provider.hpp"
 #include "galapix/database_tile_provider.hpp"
 #include "job/job_handle_group.hpp"
 #include "job/job_manager.hpp"
@@ -388,17 +387,6 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
     {
       // FIXME: Right place for this?
       workspace.load(i->get_stdio_name());
-    }
-    else if (i->get_protocol() == "buildin")
-    {
-      if (i->get_payload() == "mandelbrot")
-      {
-        workspace.add_image(Image::create(*i, TileProviderPtr(new MandelbrotTileProvider(job_manager))));
-      }
-      else
-      {
-        std::cout << "Galapix::view(): unknown buildin:// requested: " << *i << " ignoring" << std::endl;
-      }
     }
     else
     {
