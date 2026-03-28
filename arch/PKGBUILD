@@ -7,8 +7,8 @@ pkgdesc="A zoomable image viewer for large collections of images"
 arch=('i686' 'x86_64')
 url="http://code.google.com/p/galapix/"
 license=('GPL3')
-depends=('boost' 'curl' 'glew' 'imagemagick' 'libexif' 'libjpeg' 'libpng' 'mesa' 'sdl' 'sqlite3')
-makedepends=('git' 'scons' 'patch')
+depends=('boost' 'glew' 'imagemagick' 'libexif' 'libjpeg' 'libpng' 'mesa' 'sdl' 'sqlite3')
+makedepends=('cmake' 'git' 'patch')
 source=()
 md5sums=()
 
@@ -33,11 +33,12 @@ build() {
   git clone "$srcdir/$_gitname" "$srcdir/$_gitname-build"
   cd "$srcdir/$_gitname-build"
 
-  scons
+  cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+  cmake --build build
 }
 
 package() {
-  cd "$srcdir/$_gitname-build"
+  cd "$srcdir/$_gitname-build/build"
 
-  install -D -m755 build/$pkgname.sdl ${pkgdir}/usr/bin/$pkgname
+  install -D -m755 $pkgname.sdl ${pkgdir}/usr/bin/$pkgname
 }

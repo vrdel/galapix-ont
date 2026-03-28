@@ -10,12 +10,27 @@ different sizes. This thumbnail cache requires at maximum 1.5x times
 as much storage as the images themselves, but as tiles are generated
 on demand often far less.
 
-galapix can also be used to view gigapixel sized images. The Zoomify
-ImageProperties.xml file format is support.
-
-galapix supports a wide varity of image formats including JPEG, PNG,
-XCF (Gimp), KRA (Krita) and all stuff supported by ImageMagick.
+galapix supports local JPEG, PNG and ImageMagick-backed image loading
+in the current SDL-focused build.
 
 **Actually this is fork from Google code project with small fixes.**
 
 URL: [http://code.google.com/p/galapix/]
+
+Build
+-----
+
+The project now uses CMake.
+
+Configure and build:
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j4
+```
+
+Run:
+
+```bash
+./build/galapix.sdl view path/to/image.jpg
+```
