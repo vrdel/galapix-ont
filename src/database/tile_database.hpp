@@ -54,7 +54,7 @@ private:
   TileCache m_cache;
 
 public:
-  TileDatabase(Database& db);
+  TileDatabase(Database& db, int jpeg_quality);
   ~TileDatabase();
   
   bool has_tile(const FileEntry& file_entry, const Vector2i& pos, int scale);

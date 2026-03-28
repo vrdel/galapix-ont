@@ -25,10 +25,12 @@ class TileEntryStoreStatement
 {
 private:
   SQLiteStatement m_stmt;
+  int m_jpeg_quality;
 
 public:
-  TileEntryStoreStatement(SQLiteConnection& db) :
-    m_stmt(db, "INSERT into tiles (fileid, scale, x, y, data, quality, format) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);")
+  TileEntryStoreStatement(SQLiteConnection& db, int jpeg_quality = 75) :
+    m_stmt(db, "INSERT into tiles (fileid, scale, x, y, data, quality, format) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);"),
+    m_jpeg_quality(jpeg_quality)
     // FIXME: This is brute force and doesn't handle collisions
   {}
 
@@ -49,7 +51,7 @@ public:
       switch(tile.get_surface()->get_format())
       {
         case SoftwareSurface::RGB_FORMAT:
-          tile.set_blob(JPEG::save(tile.get_surface(), 75));
+          tile.set_blob(JPEG::save(tile.get_surface(), m_jpeg_quality));
           tile.set_format(TileEntry::JPEG_FORMAT);
           break;
 
@@ -71,7 +73,7 @@ public:
     m_stmt.bind_int (3, tile.get_pos().x);
     m_stmt.bind_int (4, tile.get_pos().y);
     m_stmt.bind_blob(5, tile.get_blob());
-    m_stmt.bind_int (6, 0);
+    m_stmt.bind_int (6, tile.get_format() == TileEntry::JPEG_FORMAT ? m_jpeg_quality : 0);
     m_stmt.bind_int (7, tile.get_format());
 
     m_stmt.execute();

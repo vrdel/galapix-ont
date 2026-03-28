@@ -26,6 +26,8 @@ public:
   std::vector<std::string> patterns;
   int         threads;
   int         spacing;
+  int         jpeg_quality;
+  std::string sort;
   bool        show_filenames;
   bool        auto_refresh_visible;
   std::vector<std::string> rest;
@@ -36,6 +38,8 @@ public:
     patterns(),
     threads(),
     spacing(1),
+    jpeg_quality(75),
+    sort(),
     show_filenames(false),
     auto_refresh_visible(false),
     title(),

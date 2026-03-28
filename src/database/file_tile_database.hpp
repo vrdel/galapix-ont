@@ -27,9 +27,10 @@ class FileTileDatabase : public TileDatabaseInterface
 {
 private:
   std::string m_prefix;
+  int m_jpeg_quality;
 
 public:
-  FileTileDatabase(const std::string& prefix);
+  FileTileDatabase(const std::string& prefix, int jpeg_quality = 75);
   ~FileTileDatabase();
 
   bool has_tile(const FileEntry& file_entry, const Vector2i& pos, int scale);

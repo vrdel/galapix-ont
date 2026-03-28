@@ -34,7 +34,7 @@ private:
   boost::scoped_ptr<TileDatabaseInterface> tiles;
 
 public:
-  Database(const std::string& prefix);
+  Database(const std::string& prefix, int jpeg_quality = 75);
   ~Database();
 
   SQLiteConnection& get_db() { return *m_db; }

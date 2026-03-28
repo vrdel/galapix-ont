@@ -270,7 +270,7 @@ Galapix::thumbgen(const Options& opts,
                   const std::vector<URL>& urls,
                   bool generate_all_tiles)
 {
-  Database       database(opts.database);
+  Database       database(opts.database, opts.jpeg_quality);
   JobManager     job_manager(opts.threads);
   DatabaseThread database_thread(database, job_manager);
 
@@ -327,7 +327,7 @@ Galapix::thumbgen(const Options& opts,
 void
 Galapix::view(const Options& opts, const std::vector<URL>& urls)
 {
-  Database       database(opts.database);
+  Database       database(opts.database, opts.jpeg_quality);
   JobManager     job_manager(opts.threads);
   DatabaseThread database_thread(database, job_manager);
 
@@ -435,6 +435,22 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
                 opts.auto_refresh_visible);
   SDLViewer sdl_viewer(geometry, fullscreen, anti_aliasing, viewer, title);
   viewer.layout_tight();
+  if (opts.sort == "name")
+  {
+    viewer.sort_image_list();
+  }
+  else if (opts.sort == "name-reverse")
+  {
+    viewer.sort_reverse_image_list();
+  }
+  else if (opts.sort == "mtime")
+  {
+    viewer.sort_image_list_by_mtime();
+  }
+  else if (opts.sort == "mtime-reverse")
+  {
+    viewer.sort_reverse_image_list_by_mtime();
+  }
   viewer.finish_layout();
   viewer.zoom_to_selection();
   sdl_viewer.run();
@@ -452,7 +468,6 @@ Galapix::print_usage()
 {
   std::cout << "Usage: galapix view     [OPTIONS]... [FILES]...\n"
             << "       galapix prepare  [OPTIONS]... [FILES]...\n"
-            << "       galapix thumbgen [OPTIONS]... [FILES]...\n"
             << "       galapix filegen  [OPTIONS]... [FILES]...\n"
             << "       galapix check    [OPTIONS]...\n"
             << "       galapix list     [OPTIONS]...\n"
@@ -462,7 +477,6 @@ Galapix::print_usage()
             << "Commands:\n"
             << "  view      Display the given files\n"
             << "  prepare   Generate all thumbnail for all given images\n"
-            << "  thumbgen  Generate only small thumbnails for all given images\n"
             << "  filegen   Generate only small the file entries in the database\n"
             << "  list      Lists all files in the database\n"
             << "  check     Checks the database for consistency\n"
@@ -478,6 +492,8 @@ Galapix::print_usage()
             << "  -g, --geometry WxH     Start with window size WxH\n"
             << "  -a, --anti-aliasing N  Anti-aliasing factor 0,2,4 (default: 0)\n"
             << "      --spacing N        Layout spacing factor (1=current, 2=double, ...)\n"
+            << "      --sort MODE       Startup sort for view: name, name-reverse, mtime, or mtime-reverse\n"
+            << "      --jpeg-quality N   JPEG quality for generated cache tiles (1-100, default: 75)\n"
             << "      --auto-refresh-visible  Reload changed visible images automatically\n"
             << "      --show-filenames   Show image filenames above visible images\n"
             << "  -r, --title STRING     Set window title"
@@ -578,10 +594,6 @@ Galapix::run(const Options& opts)
     else if (command == "prepare")
     {
       thumbgen(opts, urls, true);
-    }
-    else if (command == "thumbgen")
-    {
-      thumbgen(opts, urls, false);
     }
     else if (command == "filegen")
     {
@@ -700,6 +712,41 @@ Galapix::parse_args(int argc, char** argv, Options& opts)
           if (opts.spacing < 1)
           {
             throw std::runtime_error("--spacing requires an integer >= 1");
+          }
+        }
+        else
+        {
+          throw std::runtime_error(std::string(argv[i-1]) + " requires an argument");
+        }
+      }
+      else if (strcmp(argv[i], "--sort") == 0)
+      {
+        ++i;
+        if (i < argc)
+        {
+          opts.sort = argv[i];
+          if (opts.sort != "name" &&
+              opts.sort != "name-reverse" &&
+              opts.sort != "mtime" &&
+              opts.sort != "mtime-reverse")
+          {
+            throw std::runtime_error("--sort requires 'name', 'name-reverse', 'mtime', or 'mtime-reverse'");
+          }
+        }
+        else
+        {
+          throw std::runtime_error(std::string(argv[i-1]) + " requires an argument");
+        }
+      }
+      else if (strcmp(argv[i], "--jpeg-quality") == 0)
+      {
+        ++i;
+        if (i < argc)
+        {
+          opts.jpeg_quality = atoi(argv[i]);
+          if (opts.jpeg_quality < 1 || opts.jpeg_quality > 100)
+          {
+            throw std::runtime_error("--jpeg-quality requires an integer between 1 and 100");
           }
         }
         else

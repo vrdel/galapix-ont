@@ -32,8 +32,9 @@
 #include "util/software_surface_factory.hpp"
 #include "galapix/tile.hpp"
 
-FileTileDatabase::FileTileDatabase(const std::string& prefix) :
-  m_prefix(prefix)
+FileTileDatabase::FileTileDatabase(const std::string& prefix, int jpeg_quality) :
+  m_prefix(prefix),
+  m_jpeg_quality(jpeg_quality)
 {
   Filesystem::mkdir(prefix);
 }
@@ -156,7 +157,7 @@ FileTileDatabase::store_tile(const FileEntry& file_entry, const Tile& tile)
   switch(tile.get_surface()->get_format())
   {
     case SoftwareSurface::RGB_FORMAT:
-      JPEG::save(tile.get_surface(), 75, filename);
+      JPEG::save(tile.get_surface(), m_jpeg_quality, filename);
       break;
 
     case SoftwareSurface::RGBA_FORMAT:

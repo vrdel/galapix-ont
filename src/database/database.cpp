@@ -23,7 +23,7 @@
 #include "database/cached_tile_database.hpp"
 #include "util/filesystem.hpp"
 
-Database::Database(const std::string& prefix) :
+Database::Database(const std::string& prefix, int jpeg_quality) :
   m_db(),
   files(),
   tiles()
@@ -34,11 +34,11 @@ Database::Database(const std::string& prefix) :
 
   if (true)
   {
-    tiles.reset(new TileDatabase(*this));
+    tiles.reset(new TileDatabase(*this, jpeg_quality));
   }
   else
   {
-    tiles.reset(new CachedTileDatabase(*this, new FileTileDatabase(prefix + "/tiles")));
+    tiles.reset(new CachedTileDatabase(*this, new FileTileDatabase(prefix + "/tiles", jpeg_quality)));
   }
 }
 

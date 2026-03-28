@@ -27,10 +27,10 @@
 #include "plugins/png.hpp"
 #include "util/software_surface_factory.hpp"
 
-TileDatabase::TileDatabase(Database& db)
+TileDatabase::TileDatabase(Database& db, int jpeg_quality)
   : m_db(db),
     m_tiles_table(m_db.get_db()),
-    m_tile_entry_store(m_db.get_db()),
+    m_tile_entry_store(m_db.get_db(), jpeg_quality),
     m_tile_entry_get_all_by_file_entry(m_db.get_db()),
     m_tile_entry_has(m_db.get_db()),
     m_tile_entry_get_by_file_entry(m_db.get_db()),
