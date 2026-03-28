@@ -493,13 +493,6 @@ Galapix::print_usage()
             << "  -g, --geometry WxH     Start with window size WxH\n"
             << "  -a, --anti-aliasing N  Anti-aliasing factor 0,2,4 (default: 0)\n"
             << "  -r, --title STRING     Set window title"
-            << "\n"
-            << "Compiled Fetures:\n"
-#ifdef HAVE_SPACE_NAVIGATOR
-            << "  * SpaceNavigator: enabled\n"
-#else
-            << "  * SpaceNavigator: disabled\n"
-#endif
             << std::endl;
 }
 

@@ -77,7 +77,6 @@ public:
   // Image order function
   void sort();
   void sort_reverse();
-  void random_shuffle();
 
   void layout_spiral();
   void layout_tight(float aspect_w, float aspect_h);

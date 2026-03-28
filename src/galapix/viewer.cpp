@@ -33,8 +33,6 @@
 #include "tools/move_tool.hpp"
 #include "tools/pan_tool.hpp"
 #include "tools/resize_tool.hpp"
-#include "tools/rotate_tool.hpp"
-#include "tools/view_rotate_tool.hpp"
 #include "tools/zoom_rect_tool.hpp"
 #include "tools/zoom_tool.hpp"
 #include "plugins/imagemagick.hpp"
@@ -162,22 +160,15 @@ draw_filename_overlay(const ViewerState& state, const ImageCollection& images)
 Viewer::Viewer(Workspace* workspace_) :
   m_workspace(workspace_),
   m_mark_for_redraw(false),
-  m_draw_grid(false),
-  m_pin_grid(false),
-  m_gamma(1.0f),
-  m_brightness(0.0f),
-  m_contrast(1.0f),
   m_state(),
   keyboard_zoom_in_tool(),
   keyboard_zoom_out_tool(),
-  keyboard_view_rotate_tool(),
   pan_tool(),
   move_tool(),
   zoom_rect_tool(),
   zoom_in_tool(),
   zoom_out_tool(),
   resize_tool(),
-  rotate_tool(),
   grid_tool(),
   left_tool(),
   middle_tool(),
@@ -195,7 +186,6 @@ Viewer::Viewer(Workspace* workspace_) :
   move_tool      = boost::shared_ptr<MoveTool>(new MoveTool(this));
   zoom_rect_tool = boost::shared_ptr<ZoomRectTool>(new ZoomRectTool(this));
   resize_tool    = boost::shared_ptr<ResizeTool>(new ResizeTool(this));
-  rotate_tool    = boost::shared_ptr<RotateTool>(new RotateTool(this));
   grid_tool      = boost::shared_ptr<GridTool>(new GridTool(this));
 
   zoom_in_tool  = boost::shared_ptr<ZoomTool>(new ZoomTool(this, -4.0f));
@@ -203,8 +193,6 @@ Viewer::Viewer(Workspace* workspace_) :
 
   keyboard_zoom_in_tool  = boost::shared_ptr<ZoomTool>(new ZoomTool(this, -4.0f));
   keyboard_zoom_out_tool = boost::shared_ptr<ZoomTool>(new ZoomTool(this,  4.0f));
-
-  keyboard_view_rotate_tool = boost::shared_ptr<ViewRotateTool>(new ViewRotateTool(this));
 
   left_tool   = pan_tool.get();
   middle_tool = pan_tool.get();
@@ -303,20 +291,6 @@ Viewer::draw()
   glPopMatrix();
 
   draw_filename_overlay(m_state, m_workspace->get_visible_images(cliprect));
-
-  if (m_draw_grid)
-  {
-    if (m_pin_grid)
-    {
-      Framebuffer::draw_grid(m_grid_offset * m_state.get_scale() + m_state.get_offset(),
-                             m_grid_size * m_state.get_scale(),
-                             m_grid_color);
-    }
-    else
-    {
-      Framebuffer::draw_grid(m_grid_offset, m_grid_size, m_grid_color);
-    }
-  }
 }
 
 void
@@ -339,8 +313,6 @@ Viewer::on_mouse_motion(const Vector2i& pos, const Vector2i& rel)
   left_tool  ->move(m_mouse_pos, rel);
   middle_tool->move(m_mouse_pos, rel);
   right_tool ->move(m_mouse_pos, rel);
-
-  keyboard_view_rotate_tool->move(m_mouse_pos, rel);
 }
 
 void
@@ -441,18 +413,8 @@ Viewer::is_active() const
 }
 
 void
-Viewer::set_grid(const Vector2f& offset, const Sizef& size)
+Viewer::set_grid(const Vector2f&, const Sizef&)
 {
-  if (m_pin_grid)
-  {
-    m_grid_offset = offset;
-    m_grid_size   = size;
-  }
-  else
-  {
-    m_grid_offset = offset * m_state.get_scale() + m_state.get_offset();
-    m_grid_size   = size * m_state.get_scale() ;
-  }
 }
 
 void
@@ -489,81 +451,6 @@ Viewer::set_move_resize_tool()
   left_tool   = move_tool.get();
   right_tool  = resize_tool.get();
   middle_tool = pan_tool.get();
-}
-
-void
-Viewer::set_move_rotate_tool()
-{
-  log_info << "Move&Rotate Tools selected" << std::endl;
-  left_tool   = move_tool.get();
-  right_tool  = rotate_tool.get();
-  middle_tool = pan_tool.get();
-}
-
-void
-Viewer::increase_contrast()
-{
-  //contrast += 0.1f;
-  m_contrast *= 1.1f;
-  log_info << "Contrast: " << m_contrast << std::endl;
-  Framebuffer::apply_gamma_ramp(m_contrast, m_brightness, m_gamma);
-}
-
-void
-Viewer::decrease_contrast()
-{
-  //contrast -= 0.1f;
-  m_contrast /= 1.1f;
-  log_info << "Contrast: " << m_contrast << std::endl;
-  Framebuffer::apply_gamma_ramp(m_contrast, m_brightness, m_gamma);
-}
-
-void
-Viewer::increase_brightness()
-{
-  m_brightness += 0.03f;
-  log_info << "Brightness: " << m_brightness << std::endl;
-  Framebuffer::apply_gamma_ramp(m_contrast, m_brightness, m_gamma);
-}
-
-void
-Viewer::decrease_brightness()
-{
-  m_brightness -= 0.03f;
-  log_info << "Brightness: " << m_brightness << std::endl;
-  Framebuffer::apply_gamma_ramp(m_contrast, m_brightness, m_gamma);
-}
-
-void
-Viewer::increase_gamma()
-{
-  m_gamma *= 1.1f;
-  log_info << "Gamma: " << m_gamma << std::endl;
-  Framebuffer::apply_gamma_ramp(m_contrast, m_brightness, m_gamma);
-}
-
-void
-Viewer::decrease_gamma()
-{
-  m_gamma /= 1.1f;
-  log_info << "Gamma: " << m_gamma << std::endl;
-  Framebuffer::apply_gamma_ramp(m_contrast, m_brightness, m_gamma);
-}
-
-void
-Viewer::reset_gamma()
-{
-  m_brightness = 0.0f;
-  m_contrast   = 1.0f;
-  m_gamma      = 1.0f;
-  Framebuffer::apply_gamma_ramp(m_contrast, m_brightness, m_gamma);
-}
-
-void
-Viewer::toggle_grid()
-{
-  m_draw_grid = !m_draw_grid;
-  log_info << "Draw Grid: " << m_draw_grid << std::endl;
 }
 
 void
@@ -611,23 +498,6 @@ Viewer::finish_layout()
 }
 
 void
-Viewer::toggle_pinned_grid()
-{
-  m_pin_grid = !m_pin_grid;
-  log_info << "Pin Grid: " << m_pin_grid << std::endl;
-  if (!m_pin_grid)
-  {
-    m_grid_offset = m_grid_offset * m_state.get_scale() + m_state.get_offset();
-    m_grid_size  *= m_state.get_scale();
-  }
-  else
-  {
-    m_grid_offset = (m_grid_offset - m_state.get_offset()) / m_state.get_scale();
-    m_grid_size  /= m_state.get_scale();
-  }
-}
-
-void
 Viewer::toggle_background_color(bool backwards)
 {
   if (backwards)
@@ -668,27 +538,9 @@ Viewer::zoom_to_selection()
 }
 
 void
-Viewer::rotate_view_90()
-{
-  m_state.rotate(90.0f);
-}
-
-void
-Viewer::rotate_view_270()
-{
-  m_state.rotate(-90.0f);
-}
-
-void
 Viewer::delete_selection()
 {
   m_workspace->delete_selection();
-}
-
-void
-Viewer::reset_view_rotation()
-{
-  m_state.set_angle(0.0f);
 }
 
 void
@@ -762,13 +614,6 @@ Viewer::sort_image_list()
 {
   log_info << "Workspace: Sorting" << std::endl;
   m_workspace->sort();
-}
-
-void
-Viewer::shuffle_image_list()
-{
-  log_info << "Workspace: Random Shuffle" << std::endl;
-  m_workspace->random_shuffle();
 }
 
 void

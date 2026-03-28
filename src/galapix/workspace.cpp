@@ -247,17 +247,6 @@ Workspace::sort_reverse()
 }
 
 void
-Workspace::random_shuffle()
-{
-  std::random_shuffle(m_images.begin(), m_images.end());
-  if (m_layouter)
-  {
-    m_layouter->layout(m_images, true);
-    start_animation();
-  }
-}
-
-void
 Workspace::clear_cache()
 {
   for(ImageCollection::iterator i = m_images.begin(); i != m_images.end(); ++i)

@@ -32,13 +32,8 @@
 #include "math/rgba.hpp"
 #include "plugins/png.hpp"
 #include "sdl/sdl_framebuffer.hpp"
-#include "spnav/space_navigator.hpp"
 #include "util/filesystem.hpp"
 #include "util/log.hpp"
-
-#ifdef HAVE_SPACE_NAVIGATOR
-#  include <spnav.h>
-#endif
 
 SDLViewer::SDLViewer(const Size& geometry, bool fullscreen, int  anti_aliasing,
                      Viewer& viewer, const std::string &title) :
@@ -46,7 +41,6 @@ SDLViewer::SDLViewer(const Size& geometry, bool fullscreen, int  anti_aliasing,
   m_fullscreen(fullscreen),
   m_anti_aliasing(anti_aliasing),
   m_quit(false),
-  m_spnav_allow_rotate(false),
   m_viewer(viewer)
 {
   if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -72,63 +66,7 @@ SDLViewer::process_event(const SDL_Event& event)
   switch(event.type)
   {
     case SDL_USEREVENT:
-      if (event.user.code == 0)
-      {
-#ifndef HAVE_SPACE_NAVIGATOR
-        assert(!"Broken build, this code should be unreachable");
-#else
-        spnav_event* spnav_ev = static_cast<spnav_event*>(event.user.data1);
-
-        switch(spnav_ev->type)
-        {
-          case SPNAV_EVENT_MOTION:
-          {
-            if (0)
-              log_debug << "MotionEvent: "
-                        << "("
-                        << spnav_ev->motion.x << ", "
-                        << spnav_ev->motion.y << ", "
-                        << spnav_ev->motion.z
-                        << ") ("
-                        << spnav_ev->motion.rx << ", "
-                        << spnav_ev->motion.ry << ", "
-                        << spnav_ev->motion.rz
-                        << std::endl;
-
-            float factor = static_cast<float>(-abs(spnav_ev->motion.y))/10000.0f;
-
-            if (spnav_ev->motion.y > 0)
-              m_viewer.get_state().zoom(1.0f+factor);
-            else if (spnav_ev->motion.y < 0)
-              m_viewer.get_state().zoom(1.0f/(1.0f+factor));
-
-            m_viewer.get_state().move(Vector2f(static_cast<float>(-spnav_ev->motion.x) / 10.0f,
-                                               static_cast<float>(+spnav_ev->motion.z) / 10.0f));
-
-            if (m_spnav_allow_rotate)
-              m_viewer.get_state().rotate(static_cast<float>(spnav_ev->motion.ry) / 200.0f);
-          }
-          break;
-
-          case SPNAV_EVENT_BUTTON:
-            if (0)
-              std::cout << "ButtonEvent: " << spnav_ev->button.press << spnav_ev->button.bnum << std::endl;
-
-            if (spnav_ev->button.bnum == 0 && spnav_ev->button.press)
-              m_viewer.get_state().set_angle(0.0f);
-
-            if (spnav_ev->button.bnum == 1 && spnav_ev->button.press)
-              m_spnav_allow_rotate = !m_spnav_allow_rotate;
-            break;
-
-          default:
-            assert(!"SpaceNavigator: Unhandled event");
-        }
-
-        delete spnav_ev;
-#endif
-      }
-      else if (event.user.code == 1)
+      if (event.user.code == 1)
       {
         // New tile arrived
       }
@@ -245,10 +183,6 @@ SDLViewer::process_event(const SDL_Event& event)
           }
           break;
 
-        case SDLK_n:
-          m_viewer.shuffle_image_list();
-          break;
-
         case SDLK_F12:
         {
           SoftwareSurfacePtr surface = Framebuffer::screenshot();
@@ -278,34 +212,6 @@ SDLViewer::process_event(const SDL_Event& event)
           m_viewer.set_grid_tool();
           break;
 
-        case SDLK_F6:
-          m_viewer.increase_brightness();
-          break;
-
-        case SDLK_F7:
-          m_viewer.decrease_brightness();
-          break;
-
-        case SDLK_F8:
-          m_viewer.increase_contrast();
-          break;
-
-        case SDLK_F9:
-          m_viewer.decrease_contrast();
-          break;
-
-        case SDLK_F10:
-          m_viewer.reset_gamma();
-          break;
-
-        case SDLK_PAGEUP:
-          m_viewer.increase_gamma();
-          break;
-
-        case SDLK_PAGEDOWN:
-          m_viewer.decrease_gamma();
-          break;
-
         case SDLK_1:
           m_viewer.layout_auto();
           break;
@@ -330,14 +236,6 @@ SDLViewer::process_event(const SDL_Event& event)
           m_viewer.layout_vertical();
           break;
 
-        case SDLK_g:
-          m_viewer.toggle_grid();
-          break;
-
-        case SDLK_f:
-          m_viewer.toggle_pinned_grid();
-          break;
-
         case SDLK_F11:
           SDLFramebuffer::toggle_fullscreen();
           break;
@@ -357,25 +255,6 @@ SDLViewer::process_event(const SDL_Event& event)
         case SDLK_F5:
           m_viewer.refresh_selection();
           break;
-
-        case SDLK_t:
-          m_viewer.toggle_trackball_mode();
-          break;
-
-        /*
-        case SDLK_UP:
-        case SDLK_DOWN:
-          m_viewer.reset_view_rotation();
-          break;
-
-        case SDLK_LEFT:
-          m_viewer.rotate_view_270();
-          break;
-
-        case SDLK_RIGHT:
-          m_viewer.rotate_view_90();
-          break;
-        */
 
         case SDLK_b:
           if (keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT])
@@ -419,11 +298,6 @@ void
 SDLViewer::run()
 {
   Uint32 ticks = SDL_GetTicks();
-
-#ifdef HAVE_SPACE_NAVIGATOR
-  SpaceNavigator space_navigator;
-  boost::thread  space_navigator_thread(boost::bind(&SpaceNavigator::run, &space_navigator));
-#endif
 
 
   while(!m_quit)
@@ -545,11 +419,6 @@ SDLViewer::run()
     // for high-end CPUs, maybe make this configurable
     SDL_Delay(10);
   }
-
-#ifdef HAVE_SPACE_NAVIGATOR
-  // How should be join stuff that is waiting for stuff?
-  // space_navigator_thread.join();
-#endif
 
   log_info << "done" << std::endl;
 }

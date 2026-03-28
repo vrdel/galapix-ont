@@ -40,7 +40,6 @@ private:
   std::string m_title;
 
   bool m_quit;
-  bool m_spnav_allow_rotate;
 
   Viewer& m_viewer;
   

@@ -34,8 +34,6 @@ class PanTool;
 class MoveTool;
 class ZoomTool;
 class ResizeTool;
-class RotateTool;
-class ViewRotateTool;
 class ZoomRectTool;
 class Workspace;
 class GridTool;
@@ -51,17 +49,11 @@ public:
 private:
   Workspace* m_workspace;
   bool  m_mark_for_redraw;
-  bool  m_draw_grid;
-  bool  m_pin_grid;
-  float m_gamma;
-  float m_brightness;
-  float m_contrast;
 
   ViewerState m_state;
 
   boost::shared_ptr<ZoomTool>   keyboard_zoom_in_tool;
   boost::shared_ptr<ZoomTool>   keyboard_zoom_out_tool;
-  boost::shared_ptr<ViewRotateTool> keyboard_view_rotate_tool;
 
   boost::shared_ptr<PanTool>      pan_tool;
   boost::shared_ptr<MoveTool>     move_tool;
@@ -69,7 +61,6 @@ private:
   boost::shared_ptr<ZoomTool>     zoom_in_tool;
   boost::shared_ptr<ZoomTool>     zoom_out_tool;
   boost::shared_ptr<ResizeTool>   resize_tool;
-  boost::shared_ptr<RotateTool>   rotate_tool;
   boost::shared_ptr<GridTool>     grid_tool;
 
   Tool* left_tool;
@@ -112,31 +103,12 @@ public:
   void set_zoom_tool();
   void set_grid_tool();
   void set_move_resize_tool();
-  void set_move_rotate_tool();
-
-  // Gamma Controls
-  void increase_contrast();
-  void decrease_contrast();
-
-  void increase_brightness();
-  void decrease_brightness();
-
-  void increase_gamma();
-  void decrease_gamma();
-
-  void reset_gamma();
 
   // View Controls
   void zoom_to_selection();
   void zoom_home();
-  void rotate_view_90();
-  void rotate_view_270();
-  void reset_view_rotation();
 
   // Other stuff
-  void toggle_grid();
-  void toggle_pinned_grid();
-  
   void toggle_background_color(bool backwards = false);
 
   void layout_auto();
@@ -160,7 +132,6 @@ public:
 
   void sort_image_list();
   void sort_reverse_image_list();
-  void shuffle_image_list();
   
   void isolate_selection();
 
