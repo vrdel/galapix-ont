@@ -37,6 +37,24 @@ struct ImageSorter
   }
 };
 
+struct ImageMTimeSorter
+{
+  bool operator()(const ImagePtr& lhs, const ImagePtr& rhs)
+  {
+    const int lhs_mtime = lhs->get_url().get_mtime();
+    const int rhs_mtime = rhs->get_url().get_mtime();
+
+    if (lhs_mtime != rhs_mtime)
+    {
+      return lhs_mtime < rhs_mtime;
+    }
+    else
+    {
+      return lhs->get_url() < rhs->get_url();
+    }
+  }
+};
+
 struct ImageRequestFinder
 {
   std::string str;
@@ -244,6 +262,28 @@ Workspace::sort_reverse()
     m_layouter->layout(m_images, true);
     start_animation();
   } 
+}
+
+void
+Workspace::sort_by_mtime()
+{
+  std::sort(m_images.begin(), m_images.end(), ImageMTimeSorter());
+  if (m_layouter)
+  {
+    m_layouter->layout(m_images, true);
+    start_animation();
+  }
+}
+
+void
+Workspace::sort_by_mtime_reverse()
+{
+  std::sort(m_images.rbegin(), m_images.rend(), ImageMTimeSorter());
+  if (m_layouter)
+  {
+    m_layouter->layout(m_images, true);
+    start_animation();
+  }
 }
 
 void

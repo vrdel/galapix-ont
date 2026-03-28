@@ -112,11 +112,7 @@ public:
   void toggle_background_color(bool backwards = false);
 
   void layout_auto();
-  void layout_random();
-  void layout_solve_overlaps();
   void layout_tight();
-  void layout_spiral();
-  void layout_vertical();
   void finish_layout();
 
   void delete_selection();
@@ -132,6 +128,8 @@ public:
 
   void sort_image_list();
   void sort_reverse_image_list();
+  void sort_image_list_by_mtime();
+  void sort_reverse_image_list_by_mtime();
   
   void isolate_selection();
 

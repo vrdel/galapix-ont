@@ -443,6 +443,7 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
 #ifdef GALAPIX_SDL
   Viewer viewer(&workspace);
   SDLViewer sdl_viewer(geometry, fullscreen, anti_aliasing, viewer, title);
+  viewer.sort_image_list();
   viewer.layout_tight();
   viewer.finish_layout();
   viewer.zoom_to_selection();

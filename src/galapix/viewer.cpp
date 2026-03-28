@@ -461,34 +461,10 @@ Viewer::layout_auto()
 }
 
 void
-Viewer::layout_random()
-{
-  m_workspace->layout_random();
-}
-
-void
-Viewer::layout_solve_overlaps()
-{
-  m_workspace->solve_overlaps();
-}
-
-void
-Viewer::layout_spiral()
-{
-  m_workspace->layout_spiral();
-}
-
-void
 Viewer::layout_tight()
 {
   m_workspace->layout_tight(static_cast<float>(Framebuffer::get_width()),
                             static_cast<float>(Framebuffer::get_height()));
-}
-
-void
-Viewer::layout_vertical()
-{
-  m_workspace->layout_vertical();
 }
 
 void
@@ -614,6 +590,20 @@ Viewer::sort_image_list()
 {
   log_info << "Workspace: Sorting" << std::endl;
   m_workspace->sort();
+}
+
+void
+Viewer::sort_image_list_by_mtime()
+{
+  log_info << "Workspace: Sorting by mtime" << std::endl;
+  m_workspace->sort_by_mtime();
+}
+
+void
+Viewer::sort_reverse_image_list_by_mtime()
+{
+  log_info << "Workspace: Reverse sorting by mtime" << std::endl;
+  m_workspace->sort_by_mtime_reverse();
 }
 
 void

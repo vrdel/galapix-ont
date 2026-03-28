@@ -77,6 +77,8 @@ public:
   // Image order function
   void sort();
   void sort_reverse();
+  void sort_by_mtime();
+  void sort_by_mtime_reverse();
 
   void layout_spiral();
   void layout_tight(float aspect_w, float aspect_h);

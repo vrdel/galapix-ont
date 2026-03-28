@@ -212,28 +212,32 @@ SDLViewer::process_event(const SDL_Event& event)
           m_viewer.set_grid_tool();
           break;
 
-        case SDLK_1:
+        case SDLK_0:
           m_viewer.layout_auto();
           break;
 
-        case SDLK_2:
+        case SDLK_1:
+          if (keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT])
+          {
+            m_viewer.sort_reverse_image_list();
+          }
+          else
+          {
+            m_viewer.sort_image_list();
+          }
           m_viewer.layout_tight();
           break;
 
-        case SDLK_3:
-          m_viewer.layout_random();
-          break;
-
-        case SDLK_4:
-          m_viewer.layout_solve_overlaps();
-          break;
-
-        case SDLK_5:
-          m_viewer.layout_spiral();
-          break;
-
-        case SDLK_6:
-          m_viewer.layout_vertical();
+        case SDLK_2:
+          if (keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT])
+          {
+            m_viewer.sort_reverse_image_list_by_mtime();
+          }
+          else
+          {
+            m_viewer.sort_image_list_by_mtime();
+          }
+          m_viewer.layout_tight();
           break;
 
         case SDLK_F11:
@@ -275,7 +279,7 @@ SDLViewer::process_event(const SDL_Event& event)
           m_viewer.print_state();
           break;
 
-        case SDLK_0:
+        case SDLK_9:
           m_viewer.print_info();
           break;
 
