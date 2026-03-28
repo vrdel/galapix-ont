@@ -23,7 +23,6 @@
 #include "database/file_entry.hpp"
 #include "galapix/database_thread.hpp"
 #include "galapix/random_layouter.hpp"
-#include "galapix/regular_layouter.hpp"
 #include "galapix/spiral_layouter.hpp"
 #include "galapix/tight_layouter.hpp"
 #include "util/file_reader.hpp"
@@ -150,15 +149,6 @@ Workspace::layout_vertical()
     next_pos.y += static_cast<float>((*i)->get_original_height()) + spacing;
   }
   
-  start_animation();
-}
-
-void
-Workspace::layout_aspect(float aspect_w, float aspect_h, float spacing_factor)
-{
-  log_info << std::endl;
-  m_layouter.reset(new RegularLayouter(aspect_w, aspect_h, spacing_factor));
-  m_layouter->layout(m_images, true);
   start_animation();
 }
 

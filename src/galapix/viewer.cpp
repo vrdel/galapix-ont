@@ -485,14 +485,6 @@ Viewer::set_move_resize_tool()
 }
 
 void
-Viewer::layout_auto()
-{
-  m_workspace->layout_aspect(static_cast<float>(Framebuffer::get_width()),
-                             static_cast<float>(Framebuffer::get_height()),
-                             m_spacing_factor);
-}
-
-void
 Viewer::layout_tight()
 {
   m_workspace->layout_tight(static_cast<float>(Framebuffer::get_width()),

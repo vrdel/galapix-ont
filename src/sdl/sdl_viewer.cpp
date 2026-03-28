@@ -202,7 +202,7 @@ SDLViewer::process_event(const SDL_Event& event)
           break;
 
         case SDLK_0:
-          m_viewer.layout_auto();
+          m_viewer.layout_tight();
           break;
 
         case SDLK_1:

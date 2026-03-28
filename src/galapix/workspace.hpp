@@ -82,7 +82,6 @@ public:
 
   void layout_spiral();
   void layout_tight(float aspect_w, float aspect_h, float spacing_factor = 1.0f);
-  void layout_aspect(float aspect_w, float aspect_h, float spacing_factor = 1.0f);
   void layout_vertical();
   void layout_random();
   void solve_overlaps();

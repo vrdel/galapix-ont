@@ -116,7 +116,6 @@ public:
   // Other stuff
   void toggle_background_color(bool backwards = false);
 
-  void layout_auto();
   void layout_tight();
   void finish_layout();
 
