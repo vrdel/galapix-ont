@@ -172,17 +172,6 @@ SDLViewer::process_event(const SDL_Event& event)
           m_viewer.zoom_home();
           break;
 
-        case SDLK_j:
-          if (keystate[SDLK_LSHIFT] || keystate[SDLK_RSHIFT])
-          {
-            m_viewer.sort_reverse_image_list();
-          }
-          else
-          {
-            m_viewer.sort_image_list();
-          }
-          break;
-
         case SDLK_F12:
         {
           SoftwareSurfacePtr surface = Framebuffer::screenshot();

@@ -433,7 +433,6 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
 #ifdef GALAPIX_SDL
   Viewer viewer(&workspace, opts.show_filenames, static_cast<float>(opts.spacing));
   SDLViewer sdl_viewer(geometry, fullscreen, anti_aliasing, viewer, title);
-  viewer.sort_image_list();
   viewer.layout_tight();
   viewer.finish_layout();
   viewer.zoom_to_selection();
@@ -531,7 +530,6 @@ Galapix::run(const Options& opts)
       else
         Filesystem::generate_image_file_list(*i, urls);
     }
-    std::sort(urls.begin(), urls.end());
     std::cout << urls.size() << " files found." << std::endl;
 
     const std::string& command = opts.rest.front();
