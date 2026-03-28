@@ -20,11 +20,6 @@
 
 #include <stdexcept>
 #include <ostream>
-#include "plugins/rar.hpp"
-#include "plugins/zip.hpp"
-#include "plugins/seven_zip.hpp"
-#include "plugins/tar.hpp"
-#include "plugins/curl.hpp"
 #include "util/filesystem.hpp"
 
 URL::URL() :
@@ -119,40 +114,18 @@ URL::get_payload() const
 BlobPtr
 URL::get_blob(std::string* mime_type) const
 {
-  if (m_protocol == "file")
+  if (mime_type)
   {
-    if (m_plugin.empty())
-    {
-      return Blob::from_file(m_payload);
-    }
-    else if (m_plugin == "rar")
-    {
-      return Rar::get_file(m_payload, m_plugin_payload);
-    }
-    else if (m_plugin == "zip")
-    {
-      return Zip::get_file(m_payload, m_plugin_payload);
-    }
-    else if (m_plugin == "7zip")
-    {
-      return SevenZip::get_file(m_payload, m_plugin_payload);
-    }
-    else if (m_plugin == "tar")
-    {
-      return Tar::get_file(m_payload, m_plugin_payload);
-    }
-    else
-    {
-      throw std::runtime_error("URL::get_blob(): Unhandled plugin: " + m_plugin);
-    }
+    mime_type->clear();
   }
-  else if (m_protocol == "http" || m_protocol == "https" || m_protocol == "ftp")
+
+  if (m_protocol == "file" && m_plugin.empty())
   {
-    return CURLHandler::get_data(str(), mime_type);
+    return Blob::from_file(m_payload);
   }
   else
   {
-    throw std::runtime_error("URL::get_blob(): Unhandled protocol: " + m_protocol);
+    throw std::runtime_error("URL::get_blob(): unsupported non-file URL: " + str());
     return BlobPtr();
   }
 }

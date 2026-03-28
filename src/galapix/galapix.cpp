@@ -19,7 +19,6 @@
 #include "galapix/galapix.hpp"
 
 #include <boost/bind.hpp>
-#include <curl/curl.h>
 #include <algorithm>
 #include <fstream>
 #include <sstream>
@@ -36,7 +35,6 @@
 #include "galapix/options.hpp"
 #include "galapix/viewer.hpp"
 #include "galapix/workspace.hpp"
-#include "galapix/zoomify_tile_provider.hpp"
 #include "galapix/mandelbrot_tile_provider.hpp"
 #include "galapix/database_tile_provider.hpp"
 #include "job/job_handle_group.hpp"
@@ -49,7 +47,6 @@
 #include "plugins/imagemagick.hpp"
 #include "plugins/jpeg.hpp"
 #include "plugins/png.hpp"
-#include "plugins/xcf.hpp"
 #include "util/filesystem.hpp"
 #include "util/software_surface.hpp"
 #include "util/software_surface_factory.hpp"
@@ -403,10 +400,6 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
         std::cout << "Galapix::view(): unknown buildin:// requested: " << *i << " ignoring" << std::endl;
       }
     }
-    else if (Filesystem::has_extension(i->str(), "ImageProperties.xml"))
-    {
-      workspace.add_image(Image::create(*i, ZoomifyTileProvider::create(*i, job_manager)));
-    }
     else
     {
       //database_thread.request_file(*i, boost::bind(&Workspace::receive_file, &workspace, _1));
@@ -502,17 +495,9 @@ Galapix::main(int argc, char** argv)
     opts.database = Filesystem::get_home() + "/.galapix/cache3";
     parse_args(argc, argv, opts);
 
-    if (curl_global_init(CURL_GLOBAL_ALL) != 0)
-    {
-      std::cout << "Galapix::main(): curl_global_init() failed" << std::endl;
-      return EXIT_FAILURE;
-    }
-
     SoftwareSurfaceFactory software_surface_factory;
 
     run(opts);
-
-    curl_global_cleanup();
 
     return EXIT_SUCCESS;
   }

@@ -25,21 +25,9 @@
 #include "util/software_surface_loader.hpp"
 #include "util/url.hpp"
 
-#include "plugins/imagemagick.hpp"
-#include "plugins/jpeg.hpp"
-#include "plugins/kra.hpp"
-#include "plugins/png.hpp"
-#include "plugins/rsvg.hpp"
-#include "plugins/xcf.hpp"
-
-#include "util/dds_software_surface_loader.hpp"
 #include "util/imagemagick_software_surface_loader.hpp"
 #include "util/jpeg_software_surface_loader.hpp"
-#include "util/kra_software_surface_loader.hpp"
 #include "util/png_software_surface_loader.hpp"
-#include "util/rsvg_software_surface_loader.hpp"
-#include "util/ufraw_software_surface_loader.hpp"
-#include "util/xcf_software_surface_loader.hpp"
 
 SoftwareSurfaceFactory::SoftwareSurfaceFactory() :
   m_loader(),
@@ -50,21 +38,6 @@ SoftwareSurfaceFactory::SoftwareSurfaceFactory() :
   // an already registered type will be ignored
   add_loader(new JPEGSoftwareSurfaceLoader);
   add_loader(new PNGSoftwareSurfaceLoader);
-
-  if (XCF::is_available())
-    add_loader(new XCFSoftwareSurfaceLoader);
-
-  if (UFRaw::is_available())
-  add_loader(new UFRawSoftwareSurfaceLoader);
-
-  if (RSVG::is_available())
-    add_loader(new RSVGSoftwareSurfaceLoader);
-
-  if (KRA::is_available())
-    add_loader(new KRASoftwareSurfaceLoader);
-
-  add_loader(new DDSSoftwareSurfaceLoader);
-
   add_loader(new ImagemagickSoftwareSurfaceLoader);
 }
 

@@ -128,7 +128,6 @@ class Project:
         self.libgalapix_env.ParseConfig('pkg-config --cflags --libs libpng  | sed "s/-I/-isystem/g"')
         self.libgalapix_env.ParseConfig('pkg-config --cflags --libs sdl | sed "s/-I/-isystem/g"')
         self.libgalapix_env.ParseConfig('pkg-config --cflags --libs Magick++ | sed "s/-I/-isystem/g"')
-        self.libgalapix_env.ParseConfig('pkg-config --cflags --libs libcurl | sed "s/-I/-isystem/g"')
 
         self.libgalapix_util = self.libgalapix_env.StaticLibrary('galapix_util',
                                                                  Glob("src/util/*.cpp") + \
@@ -154,7 +153,6 @@ class Project:
         sdl_env.ParseConfig('pkg-config --cflags --libs libpng | sed "s/-I/-isystem/g"')
         sdl_env.ParseConfig('pkg-config --cflags --libs sdl | sed "s/-I/-isystem/g"')
         sdl_env.ParseConfig('pkg-config --cflags --libs Magick++ | sed "s/-I/-isystem/g"')
-        sdl_env.ParseConfig('pkg-config --cflags --libs libcurl | sed "s/-I/-isystem/g"')
         sdl_env.Program('galapix.sdl',
                         ['src/sdl/sdl_framebuffer.cpp',
                          'src/sdl/sdl_viewer.cpp'] + \

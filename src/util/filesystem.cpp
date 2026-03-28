@@ -28,10 +28,6 @@
 #include <utime.h>
 #include <sstream>
 
-#include "plugins/tar.hpp"
-#include "plugins/zip.hpp"
-#include "plugins/seven_zip.hpp"
-#include "plugins/rar.hpp"
 #include "util/software_surface.hpp"
 #include "util/software_surface_factory.hpp"
 #include "util/filesystem.hpp"
@@ -299,66 +295,7 @@ Filesystem::generate_image_file_list(const std::string& pathname, std::vector<UR
 
       try 
       {
-        if (has_extension(*i, ".rar")      || 
-            has_extension(*i, ".rar.part") ||
-            has_extension(*i, ".cbr"))
-        {
-          const std::vector<std::string>& files = Rar::get_filenames(*i);
-          for(std::vector<std::string>::const_iterator j = files.begin(); j != files.end(); ++j)
-          {
-            URL archive_url = URL::from_string(url.str() + "//rar:" + *j);
-            if (SoftwareSurfaceFactory::current().has_supported_extension(archive_url))
-            {
-              file_list.push_back(archive_url);
-            }
-          }
-        }
-        else if (has_extension(*i, ".zip") || 
-                 has_extension(*i, ".cbz"))
-        {
-          const std::vector<std::string>& files = Zip::get_filenames(*i);
-          for(std::vector<std::string>::const_iterator j = files.begin(); j != files.end(); ++j)
-          {
-            URL archive_url = URL::from_string(url.str() + "//zip:" + *j);
-            if (SoftwareSurfaceFactory::current().has_supported_extension(archive_url))
-            {
-              file_list.push_back(archive_url);
-            }
-          }
-        }
-        else if (has_extension(*i, ".7z"))
-        {
-          const std::vector<std::string>& files = SevenZip::get_filenames(*i);
-          for(std::vector<std::string>::const_iterator j = files.begin(); j != files.end(); ++j)
-          {
-            URL archive_url = URL::from_string(url.str() + "//7zip:" + *j);
-            if (SoftwareSurfaceFactory::current().has_supported_extension(archive_url))
-            {
-              file_list.push_back(archive_url);
-            }
-          }
-        }
-        else if (has_extension(*i, ".tar")    || 
-                 has_extension(*i, ".tar.bz") || 
-                 has_extension(*i, ".tar.gz") ||
-                 has_extension(*i, ".tgz")    || 
-                 has_extension(*i, ".tbz"))
-        {
-          const std::vector<std::string>& files = Tar::get_filenames(*i);
-          for(std::vector<std::string>::const_iterator j = files.begin(); j != files.end(); ++j)
-          {
-            URL archive_url = URL::from_string(url.str() + "//tar:" + *j);
-            if (SoftwareSurfaceFactory::current().has_supported_extension(archive_url))
-            {
-              file_list.push_back(archive_url);
-            }
-          }
-        }
-        else if (has_extension(*i, ".galapix"))
-        {
-          file_list.push_back(url);
-        }
-        else if (has_extension(*i, "ImageProperties.xml"))
+        if (has_extension(*i, ".galapix"))
         {
           file_list.push_back(url);
         }
