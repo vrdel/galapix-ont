@@ -28,7 +28,6 @@
 #include "database/file_entry_get_by_url_statement.hpp"
 #include "database/file_entry_get_by_file_id_statement.hpp"
 #include "database/file_entry_store_statement.hpp"
-#include "database/file_entry_get_by_pattern_statement.hpp"
 #include "database/file_entry_delete_statement.hpp"
 
 class URL;
@@ -51,7 +50,6 @@ private:
   FileTable m_file_table;
   FileEntryGetAllStatement       m_file_entry_get_all;
   FileEntryGetByFileIdStatement  m_file_entry_get_by_fileid;
-  FileEntryGetByPatternStatement m_file_entry_get_by_pattern;
   FileEntryGetByUrlStatement     m_file_entry_get_by_url;
   FileEntryStoreStatement        m_file_entry_store;
   FileEntryDeleteStatement       m_file_entry_delete;

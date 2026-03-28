@@ -476,7 +476,7 @@ Galapix::print_usage()
             << "  -f, --fullscreen       Start in fullscreen mode\n"
             << "  -t, --threads          Number of worker threads (default: 2)\n"
             << "  -F, --files-from FILE  Get urls from FILE\n"
-            << "  -p, --pattern GLOB     Select files from the database via globbing pattern\n"
+            << "  -p, --pattern REGEX    Select files from the database via regex\n"
             << "  -g, --geometry WxH     Start with window size WxH\n"
             << "  -a, --anti-aliasing N  Anti-aliasing factor 0,2,4 (default: 0)\n"
             << "      --spacing N        Layout spacing factor (1=current, 2=double, ...)\n"

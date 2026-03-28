@@ -19,6 +19,7 @@
 #include "database/file_database.hpp"
 
 #include <iostream>
+#include <regex>
 
 #include "database/file_entry.hpp"
 #include "database/database.hpp"
@@ -31,7 +32,6 @@ FileDatabase::FileDatabase(Database& db) :
   m_file_table(m_db.get_db()),
   m_file_entry_get_all(m_db.get_db()),
   m_file_entry_get_by_fileid(m_db.get_db()),
-  m_file_entry_get_by_pattern(m_db.get_db()),
   m_file_entry_get_by_url(m_db.get_db()),
   m_file_entry_store(m_db.get_db()),
   m_file_entry_delete(m_db.get_db()),
@@ -77,7 +77,17 @@ FileDatabase::get_file_entry(const URL& url)
 void
 FileDatabase::get_file_entries(const std::string& pattern, std::vector<FileEntry>& entries_out)
 {
-  m_file_entry_get_by_pattern(pattern, entries_out);
+  std::vector<FileEntry> entries;
+  m_file_entry_get_all(entries);
+
+  const std::regex regex_pattern(pattern);
+  for(std::vector<FileEntry>::const_iterator i = entries.begin(); i != entries.end(); ++i)
+  {
+    if (std::regex_search(i->get_url().str(), regex_pattern))
+    {
+      entries_out.push_back(*i);
+    }
+  }
 }
 
 void
