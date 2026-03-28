@@ -431,7 +431,8 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
   database_thread.start_thread();
 
 #ifdef GALAPIX_SDL
-  Viewer viewer(&workspace, opts.show_filenames, static_cast<float>(opts.spacing));
+  Viewer viewer(&workspace, opts.show_filenames, static_cast<float>(opts.spacing),
+                opts.auto_refresh_visible);
   SDLViewer sdl_viewer(geometry, fullscreen, anti_aliasing, viewer, title);
   viewer.layout_tight();
   viewer.finish_layout();
@@ -477,6 +478,7 @@ Galapix::print_usage()
             << "  -g, --geometry WxH     Start with window size WxH\n"
             << "  -a, --anti-aliasing N  Anti-aliasing factor 0,2,4 (default: 0)\n"
             << "      --spacing N        Layout spacing factor (1=current, 2=double, ...)\n"
+            << "      --auto-refresh-visible  Reload changed visible images automatically\n"
             << "      --show-filenames   Show image filenames above visible images\n"
             << "  -r, --title STRING     Set window title"
             << std::endl;
@@ -708,6 +710,10 @@ Galapix::parse_args(int argc, char** argv, Options& opts)
       else if (strcmp(argv[i], "--show-filenames") == 0)
       {
         opts.show_filenames = true;
+      }
+      else if (strcmp(argv[i], "--auto-refresh-visible") == 0)
+      {
+        opts.auto_refresh_visible = true;
       }
       else if (strcmp(argv[i], "--title") == 0)
       {

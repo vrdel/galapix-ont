@@ -58,7 +58,9 @@ Image::Image(const URL& url, TileProviderPtr provider) :
   m_last_scale(1.0f),
   m_target_scale(1.0f),
   m_angle(0.0f),
+  m_known_mtime(provider ? provider->get_mtime() : 0),
   m_file_entry_requested(false),
+  m_refresh_pending(false),
   m_cache(),
   m_renderer(),
   m_file_entry_queue(),
@@ -238,6 +240,8 @@ Image::process_queues()
     else
     {
       m_file_entry_requested = false;
+      m_refresh_pending = false;
+      m_known_mtime = file_entry.get_mtime();
       set_provider(DatabaseTileProvider::create(file_entry));
     }
   }
@@ -254,6 +258,7 @@ Image::process_queues()
 
   while(!m_tile_provider_queue.empty())
   {
+    m_refresh_pending = false;
     set_provider(m_tile_provider_queue.front());
     m_tile_provider_queue.pop();
   }
@@ -304,6 +309,10 @@ Image::set_provider(TileProviderPtr provider)
   if (provider)
   {
     m_provider = provider;
+    if (m_provider->get_mtime() != 0)
+    {
+      m_known_mtime = m_provider->get_mtime();
+    }
     m_cache    = ImageTileCache::create(m_provider);
     m_renderer.reset(new ImageRenderer(*this, m_cache));
   }
@@ -324,17 +333,38 @@ Image::clear_provider()
   set_provider(TileProviderPtr());
 }
 
-void
+bool
 Image::refresh(bool force)
 {
-  if (force)
+  if (!m_provider || m_refresh_pending || !m_url.has_stdio_name())
   {
-    if (m_provider)
+    return false;
+  }
+
+  bool should_refresh = force;
+
+  if (!should_refresh)
+  {
+    try
     {
-      m_provider->refresh(weak(boost::bind(&Image::receive_tile_provider, _1, _2), m_self));
-      clear_provider();
+      const int current_mtime = m_url.get_mtime();
+      should_refresh = (m_known_mtime != 0 && current_mtime != m_known_mtime);
+    }
+    catch(std::exception&)
+    {
+      return false;
     }
   }
+
+  if (!should_refresh)
+  {
+    return false;
+  }
+
+  m_refresh_pending = true;
+  m_provider->refresh(weak(boost::bind(&Image::receive_tile_provider, _1, _2), m_self));
+  clear_provider();
+  return true;
 }
 
 void

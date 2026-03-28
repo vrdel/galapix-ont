@@ -314,6 +314,9 @@ SDLViewer::run()
     else
     {
       SDL_Event event;
+      Uint32 cticks = SDL_GetTicks();
+      float delta = static_cast<float>(cticks - ticks) / 1000.0f;
+      ticks = cticks;
 
       SDL_PumpEvents();
 
@@ -397,10 +400,11 @@ SDLViewer::run()
         process_event(event);
       }
 
+      m_viewer.update(delta);
+
       // FIXME: We should try to detect if we need a redraw and
       // only draw then, else we will redraw on each mouse motion
       m_viewer.draw();
-      ticks = SDL_GetTicks();
     }
 
     SDLFramebuffer::flip();

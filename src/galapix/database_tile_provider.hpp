@@ -63,6 +63,11 @@ public:
     return m_file_entry.get_image_size();
   }
 
+  int get_mtime() const
+  {
+    return m_file_entry.get_mtime();
+  }
+
   struct FileEntry2TileProvider
   {
     boost::function<void (TileProviderPtr)> m_callback;

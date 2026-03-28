@@ -65,8 +65,10 @@ private:
 
   /** Rotation angle */
   float m_angle;
+  int   m_known_mtime;
 
   bool m_file_entry_requested;
+  bool m_refresh_pending;
 
   boost::shared_ptr<ImageTileCache> m_cache;
   boost::scoped_ptr<ImageRenderer>  m_renderer;
@@ -127,7 +129,7 @@ public:
   // _____________________________________________________
   // Debug stuff
   void clear_cache();
-  void refresh(bool force);
+  bool refresh(bool force);
   void cache_cleanup();
   void print_info() const;
 

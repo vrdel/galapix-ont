@@ -27,6 +27,7 @@ public:
   int         threads;
   int         spacing;
   bool        show_filenames;
+  bool        auto_refresh_visible;
   std::vector<std::string> rest;
   std::string title;
 
@@ -36,6 +37,7 @@ public:
     threads(),
     spacing(1),
     show_filenames(false),
+    auto_refresh_visible(false),
     title(),
     rest()
   {}

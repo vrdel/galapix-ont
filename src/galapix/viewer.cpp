@@ -157,7 +157,8 @@ draw_filename_overlay(const ViewerState& state, const ImageCollection& images)
 
 } // namespace
 
-Viewer::Viewer(Workspace* workspace_, bool show_filenames, float spacing_factor) :
+Viewer::Viewer(Workspace* workspace_, bool show_filenames, float spacing_factor,
+               bool auto_refresh_visible) :
   m_workspace(workspace_),
   m_mark_for_redraw(false),
   m_state(),
@@ -180,7 +181,9 @@ Viewer::Viewer(Workspace* workspace_, bool show_filenames, float spacing_factor)
   m_grid_size(400.0f, 300.0f),
   m_grid_color(255, 0, 0, 255),
   m_show_filenames(show_filenames),
-  m_spacing_factor(spacing_factor)
+  m_auto_refresh_visible(auto_refresh_visible),
+  m_spacing_factor(spacing_factor),
+  m_auto_refresh_accum(0.0f)
 {
   current_ = this;
 
@@ -308,6 +311,29 @@ Viewer::update(float delta)
 
   keyboard_zoom_in_tool ->update(m_mouse_pos, delta);
   keyboard_zoom_out_tool->update(m_mouse_pos, delta);
+
+  if (m_auto_refresh_visible)
+  {
+    m_auto_refresh_accum += delta;
+    if (m_auto_refresh_accum >= 1.0f)
+    {
+      m_auto_refresh_accum = 0.0f;
+
+      Rectf cliprect = m_state.screen2world(Rect(0, 0, Framebuffer::get_width(), Framebuffer::get_height()));
+      bool refreshed = false;
+      ImageCollection visible_images = m_workspace->get_visible_images(cliprect);
+
+      for(ImageCollection::iterator i = visible_images.begin(); i != visible_images.end(); ++i)
+      {
+        refreshed = (*i)->refresh(false) || refreshed;
+      }
+
+      if (refreshed)
+      {
+        redraw();
+      }
+    }
+  }
 }
 
 void
@@ -569,6 +595,7 @@ Viewer::refresh_selection()
   {
     (*i)->refresh(force);
   }
+  redraw();
 }
 
 void
