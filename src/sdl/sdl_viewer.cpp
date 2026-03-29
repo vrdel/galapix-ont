@@ -60,6 +60,9 @@ SDLViewer::~SDLViewer()
 void
 SDLViewer::process_event(const SDL_Event& event)
 {
+  const float wheel_zoom_factor = 1.1f;
+  const float ctrl_wheel_zoom_factor = 1.25f;
+  const float shift_wheel_zoom_factor = 1.5f;
 
   Uint8* keystate = SDL_GetKeyState(0);
 
@@ -95,12 +98,26 @@ SDLViewer::process_event(const SDL_Event& event)
       switch(event.button.button)
       {
         case SDL_BUTTON_WHEELUP:
-          m_viewer.get_state().zoom(1.1f, Vector2i(event.button.x, event.button.y));
+        {
+          const SDLMod modifiers = SDL_GetModState();
+          const float zoom_factor =
+            (modifiers & KMOD_SHIFT) ? shift_wheel_zoom_factor :
+            (modifiers & KMOD_CTRL)  ? ctrl_wheel_zoom_factor :
+                                       wheel_zoom_factor;
+          m_viewer.get_state().zoom(zoom_factor, Vector2i(event.button.x, event.button.y));
           break;
+        }
 
         case SDL_BUTTON_WHEELDOWN:
-          m_viewer.get_state().zoom(1.0f/1.1f, Vector2i(event.button.x, event.button.y));
+        {
+          const SDLMod modifiers = SDL_GetModState();
+          const float zoom_factor =
+            (modifiers & KMOD_SHIFT) ? shift_wheel_zoom_factor :
+            (modifiers & KMOD_CTRL)  ? ctrl_wheel_zoom_factor :
+                                       wheel_zoom_factor;
+          m_viewer.get_state().zoom(1.0f / zoom_factor, Vector2i(event.button.x, event.button.y));
           break;
+        }
 
         default:
           m_viewer.on_mouse_button_down(Vector2i(event.button.x, event.button.y),

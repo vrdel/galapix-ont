@@ -17,6 +17,7 @@
 */
 
 #include "tools/pan_tool.hpp"
+#include <SDL.h>
 #include <util/log.hpp>
 
 #include "galapix/viewer.hpp"
@@ -36,17 +37,23 @@ PanTool::~PanTool()
 void
 PanTool::move(const Vector2i& pos, const Vector2i& rel)
 {
+  const SDLMod modifiers = SDL_GetModState();
+  const int pan_factor =
+    (modifiers & KMOD_SHIFT) ? 6 :
+    (modifiers & KMOD_CTRL)  ? 3 :
+                               1;
+
   mouse_pos = pos;
 
   if (trackball_mode)
   {
-    viewer->get_state().move(rel * 1);
+    viewer->get_state().move(rel * pan_factor);
 
   }
   else if (move_active)
   { // FIXME: This is of course wrong, since depending on x/yrel will lead to drift
     // Also we shouldn't use 4x speed, but 1x seems so useless
-    viewer->get_state().move(rel * 1);
+    viewer->get_state().move(rel * pan_factor);
   }
 }
 
