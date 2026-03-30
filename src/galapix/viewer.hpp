@@ -71,6 +71,8 @@ private:
 
   int m_background_color;
   std::vector<RGBA> m_background_colors;
+  bool m_has_selection_border_color;
+  RGBA m_selection_border_color;
 
   Vector2f m_grid_offset;
   Sizef    m_grid_size;
@@ -82,7 +84,9 @@ private:
 
 public:
   Viewer(Workspace* workspace, bool show_filenames = false, float spacing_factor = 1.0f,
-         bool auto_refresh_visible = false);
+         bool auto_refresh_visible = false, bool has_background_color = false,
+         const RGBA& background_color = RGBA(), bool has_selection_border_color = false,
+         const RGBA& selection_border_color = RGBA());
 
   void draw();
   void update(float delta);
@@ -91,6 +95,8 @@ public:
 
   ViewerState& get_state() { return m_state; }
   Workspace*   get_workspace() { return m_workspace; }
+  RGBA get_background_color() const { return m_background_colors[m_background_color]; }
+  RGB get_selection_border_color() const;
 
   void on_key_up(int key);
   void on_key_down(int key);

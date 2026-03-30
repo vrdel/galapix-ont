@@ -168,7 +168,10 @@ public:
       }
       else
       {
-        m_file_callback(file_entry);
+        if (m_file_callback)
+        {
+          m_file_callback(file_entry);
+        }
 
         TileEntry tile_entry;
         if (db.get_tiles().get_tile(file_entry, file_entry.get_thumbnail_scale(), Vector2i(0, 0), tile_entry))

@@ -109,11 +109,14 @@ FileEntryGenerationJob::run()
     
     TileGenerator::cut_into_tiles(surface, size, min_scale, max_scale, 
                                   boost::bind(&FileEntryGenerationJob::process_tile, this, file_entry, _1));
+
+    get_handle().set_finished();
   }
   catch(const std::exception& err)
   {
     log_error << "Error while processing " << m_url << std::endl;
     log_error << "  Exception: " << err.what() << std::endl;
+    get_handle().set_failed();
   }
 }
 

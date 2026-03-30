@@ -396,7 +396,14 @@ Image::get_url() const
 void
 Image::draw_mark()
 {
-  Framebuffer::draw_rect(m_image_rect, RGB(255, 255, 255));
+  if (Viewer::current())
+  {
+    Framebuffer::draw_rect(m_image_rect, Viewer::current()->get_selection_border_color());
+  }
+  else
+  {
+    Framebuffer::draw_rect(m_image_rect, RGB(64, 64, 64));
+  }
 }
 
 Rectf

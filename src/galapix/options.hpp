@@ -28,6 +28,10 @@ public:
   int         spacing;
   int         jpeg_quality;
   std::string sort;
+  bool        has_background_color;
+  unsigned int background_color;
+  bool        has_selection_border_color;
+  unsigned int selection_border_color;
   bool        show_filenames;
   bool        auto_refresh_visible;
   std::vector<std::string> rest;
@@ -40,6 +44,10 @@ public:
     spacing(1),
     jpeg_quality(75),
     sort(),
+    has_background_color(false),
+    background_color(0),
+    has_selection_border_color(false),
+    selection_border_color(0),
     show_filenames(false),
     auto_refresh_visible(false),
     title(),

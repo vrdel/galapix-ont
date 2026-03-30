@@ -158,7 +158,9 @@ draw_filename_overlay(const ViewerState& state, const ImageCollection& images)
 } // namespace
 
 Viewer::Viewer(Workspace* workspace_, bool show_filenames, float spacing_factor,
-               bool auto_refresh_visible) :
+               bool auto_refresh_visible, bool has_background_color,
+               const RGBA& background_color, bool has_selection_border_color,
+               const RGBA& selection_border_color) :
   m_workspace(workspace_),
   m_mark_for_redraw(false),
   m_state(),
@@ -177,6 +179,8 @@ Viewer::Viewer(Workspace* workspace_, bool show_filenames, float spacing_factor,
   m_mouse_pos(),
   m_background_color(),
   m_background_colors(),
+  m_has_selection_border_color(has_selection_border_color),
+  m_selection_border_color(selection_border_color),
   m_grid_offset(0.0f, 0.0f),
   m_grid_size(400.0f, 300.0f),
   m_grid_color(255, 0, 0, 255),
@@ -223,6 +227,29 @@ Viewer::Viewer(Workspace* workspace_, bool show_filenames, float spacing_factor,
   m_background_colors.push_back(RGBA(  0, 128,   0));
   m_background_colors.push_back(RGBA(  0, 128, 128));
   m_background_colors.push_back(RGBA(  0,   0, 128));
+
+  if (has_background_color)
+  {
+    m_background_colors.insert(m_background_colors.begin(), background_color);
+    m_background_color = 0;
+  }
+}
+
+RGB
+Viewer::get_selection_border_color() const
+{
+  if (m_has_selection_border_color)
+  {
+    return RGB(m_selection_border_color.r,
+               m_selection_border_color.g,
+               m_selection_border_color.b);
+  }
+
+  const RGBA background_color = get_background_color();
+  const int brightness_step = 64;
+  return RGB(static_cast<uint8_t>(std::min(255, static_cast<int>(background_color.r) + brightness_step)),
+             static_cast<uint8_t>(std::min(255, static_cast<int>(background_color.g) + brightness_step)),
+             static_cast<uint8_t>(std::min(255, static_cast<int>(background_color.b) + brightness_step)));
 }
 
 void

@@ -20,6 +20,7 @@
 
 #include <boost/bind.hpp>
 #include <algorithm>
+#include <cctype>
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
@@ -52,6 +53,52 @@
 #ifdef GALAPIX_SDL
 #  include "sdl/sdl_viewer.hpp"
 #endif
+
+namespace {
+
+RGBA
+parse_hex_color(const std::string& value, const char* option_name)
+{
+  std::string hex = value;
+  if (!hex.empty() && hex[0] == '#')
+  {
+    hex.erase(0, 1);
+  }
+
+  if (hex.size() != 6 && hex.size() != 8)
+  {
+    throw std::runtime_error(std::string(option_name) + " requires RRGGBB or RRGGBBAA");
+  }
+
+  for(std::string::const_iterator i = hex.begin(); i != hex.end(); ++i)
+  {
+    if (!std::isxdigit(static_cast<unsigned char>(*i)))
+    {
+      throw std::runtime_error(std::string(option_name) + " requires a hexadecimal color");
+    }
+  }
+
+  std::istringstream in(hex);
+  unsigned int color = 0;
+  in >> std::hex >> color;
+
+  if (hex.size() == 6)
+  {
+    return RGBA(static_cast<uint8_t>((color >> 16) & 0xFF),
+                static_cast<uint8_t>((color >>  8) & 0xFF),
+                static_cast<uint8_t>((color >>  0) & 0xFF),
+                255);
+  }
+  else
+  {
+    return RGBA(static_cast<uint8_t>((color >> 24) & 0xFF),
+                static_cast<uint8_t>((color >> 16) & 0xFF),
+                static_cast<uint8_t>((color >>  8) & 0xFF),
+                static_cast<uint8_t>((color >>  0) & 0xFF));
+  }
+}
+
+} // namespace
 
 Galapix::Galapix()
   : fullscreen(false),
@@ -287,7 +334,7 @@ Galapix::thumbgen(const Options& opts,
                                                       [&file_entries](const FileEntry& entry) {
                                                         file_entries.push_back(entry);
                                                       },
-                                                      std::function<void (FileEntry, Tile)>()));
+                                                      boost::function<void (FileEntry, Tile)>()));
 
     //job_handle_group.add(database_thread.request_file(*i,
                                                       //boost::bind(&std::vector<FileEntry>::push_back, &file_entries, _1),
@@ -420,7 +467,9 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
 
 #ifdef GALAPIX_SDL
   Viewer viewer(&workspace, opts.show_filenames, static_cast<float>(opts.spacing),
-                opts.auto_refresh_visible);
+                opts.auto_refresh_visible, opts.has_background_color,
+                RGBA(opts.background_color), opts.has_selection_border_color,
+                RGBA(opts.selection_border_color));
   SDLViewer sdl_viewer(geometry, fullscreen, anti_aliasing, viewer, title);
   viewer.layout_tight();
   if (opts.sort == "name")
@@ -481,6 +530,8 @@ Galapix::print_usage()
             << "  -a, --anti-aliasing N  Anti-aliasing factor 0,2,4 (default: 0)\n"
             << "      --spacing N        Layout spacing factor (1=current, 2=double, ...)\n"
             << "      --sort MODE       Startup sort for view: name, name-reverse, mtime, or mtime-reverse\n"
+            << "      --background-color HEX  Startup background color, for example #202020 or 202020\n"
+            << "      --selection-border-color HEX  Override selected-image border color\n"
             << "      --jpeg-quality N   JPEG quality for generated cache tiles (1-100, default: 75)\n"
             << "      --auto-refresh-visible  Reload changed visible images automatically\n"
             << "      --show-filenames   Show image filenames above visible images\n"
@@ -720,6 +771,32 @@ Galapix::parse_args(int argc, char** argv, Options& opts)
           {
             throw std::runtime_error("--sort requires 'name', 'name-reverse', 'mtime', or 'mtime-reverse'");
           }
+        }
+        else
+        {
+          throw std::runtime_error(std::string(argv[i-1]) + " requires an argument");
+        }
+      }
+      else if (strcmp(argv[i], "--background-color") == 0)
+      {
+        ++i;
+        if (i < argc)
+        {
+          opts.background_color = parse_hex_color(argv[i], "--background-color").get_uint32();
+          opts.has_background_color = true;
+        }
+        else
+        {
+          throw std::runtime_error(std::string(argv[i-1]) + " requires an argument");
+        }
+      }
+      else if (strcmp(argv[i], "--selection-border-color") == 0)
+      {
+        ++i;
+        if (i < argc)
+        {
+          opts.selection_border_color = parse_hex_color(argv[i], "--selection-border-color").get_uint32();
+          opts.has_selection_border_color = true;
         }
         else
         {
