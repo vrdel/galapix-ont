@@ -318,7 +318,7 @@ Galapix::thumbgen(const Options& opts,
 {
   Database       database(opts.database, opts.jpeg_quality);
   JobManager     job_manager(opts.threads);
-  DatabaseThread database_thread(database, job_manager);
+  DatabaseThread database_thread(database, job_manager, opts.memory_only);
 
   database_thread.start_thread();
   job_manager.start_thread();
@@ -375,7 +375,7 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
 {
   Database       database(opts.database, opts.jpeg_quality);
   JobManager     job_manager(opts.threads);
-  DatabaseThread database_thread(database, job_manager);
+  DatabaseThread database_thread(database, job_manager, opts.memory_only);
 
   Workspace workspace;
 
@@ -404,7 +404,8 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
       workspace.add_image(image);
 
       TileEntry tile_entry;
-      if (database.get_tiles().get_tile(*i, i->get_thumbnail_scale(), Vector2i(0,0), tile_entry))
+      if (!opts.memory_only &&
+          database.get_tiles().get_tile(*i, i->get_thumbnail_scale(), Vector2i(0,0), tile_entry))
       {
         image->receive_tile(*i, Tile(tile_entry));
       }
@@ -449,7 +450,8 @@ Galapix::view(const Options& opts, const std::vector<URL>& urls)
         workspace.add_image(image);
 
         TileEntry tile_entry;
-        if (database.get_tiles().get_tile(file_entry, file_entry.get_thumbnail_scale(), Vector2i(0,0), tile_entry))
+        if (!opts.memory_only &&
+            database.get_tiles().get_tile(file_entry, file_entry.get_thumbnail_scale(), Vector2i(0,0), tile_entry))
         {
           image->receive_tile(file_entry, Tile(tile_entry));
         }
@@ -532,6 +534,7 @@ Galapix::print_usage()
             << "      --sort MODE       Startup sort for view: name, name-reverse, mtime, or mtime-reverse\n"
             << "      --background-color HEX  Startup background color, for example #202020 or 202020\n"
             << "      --selection-border-color HEX  Override selected-image border color\n"
+            << "      --memory-only      Bypass SQLite tile cache and generate tiles in memory\n"
             << "      --jpeg-quality N   JPEG quality for generated cache tiles (1-100, default: 75)\n"
             << "      --auto-refresh-visible  Reload changed visible images automatically\n"
             << "      --show-filenames   Show image filenames above visible images\n"
@@ -802,6 +805,10 @@ Galapix::parse_args(int argc, char** argv, Options& opts)
         {
           throw std::runtime_error(std::string(argv[i-1]) + " requires an argument");
         }
+      }
+      else if (strcmp(argv[i], "--memory-only") == 0)
+      {
+        opts.memory_only = true;
       }
       else if (strcmp(argv[i], "--jpeg-quality") == 0)
       {

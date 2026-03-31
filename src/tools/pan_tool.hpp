@@ -28,11 +28,12 @@ class PanTool : public Tool
 private:
   bool trackball_mode;
   bool move_active;
+  int m_base_pan_factor;
 
   Vector2i mouse_pos;
 
 public:
-  PanTool(Viewer* viewer);
+  PanTool(Viewer* viewer, int base_pan_factor = 1);
   ~PanTool();
 
   void move(const Vector2i& pos, const Vector2i& rel);

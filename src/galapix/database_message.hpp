@@ -108,6 +108,12 @@ public:
   {
     if (!job_handle.is_aborted())
     {
+      if (DatabaseThread::current()->is_memory_only_tiles())
+      {
+        DatabaseThread::current()->generate_tile(job_handle, file_entry, tilescale, pos, callback);
+        return;
+      }
+
       TileEntry tile;
       if (db.get_tiles().get_tile(file_entry, tilescale, pos, tile))
       {

@@ -46,6 +46,7 @@ private:
   Database& m_database;
 
   JobManager& m_tile_job_manager;
+  bool m_memory_only_tiles;
 
   bool m_quit;
   bool m_abort;
@@ -59,8 +60,11 @@ protected:
 
 public:
   DatabaseThread(Database& database,
-                 JobManager& tile_job_manager);
+                 JobManager& tile_job_manager,
+                 bool memory_only_tiles = false);
   virtual ~DatabaseThread();
+
+  bool is_memory_only_tiles() const { return m_memory_only_tiles; }
 
   void stop_thread();
   void abort_thread();

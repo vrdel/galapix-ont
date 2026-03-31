@@ -32,9 +32,11 @@
 DatabaseThread* DatabaseThread::current_ = 0;
 
 DatabaseThread::DatabaseThread(Database& database,
-                               JobManager& tile_job_manager) :
+                               JobManager& tile_job_manager,
+                               bool memory_only_tiles) :
   m_database(database),
   m_tile_job_manager(tile_job_manager),
+  m_memory_only_tiles(memory_only_tiles),
   m_quit(false),
   m_abort(false),
   m_request_queue(),
@@ -254,7 +256,10 @@ DatabaseThread::generate_tile(const JobHandle& job_handle,
     }
 
     boost::shared_ptr<TileGenerationJob> job_ptr(new TileGenerationJob(file_entry, min_scale_in_db, max_scale_in_db));
-    job_ptr->sig_tile_callback().connect(boost::bind(&DatabaseThread::receive_tile, this, _1, _2));
+    if (!m_memory_only_tiles)
+    {
+      job_ptr->sig_tile_callback().connect(boost::bind(&DatabaseThread::receive_tile, this, _1, _2));
+    }
 
     job_ptr->request_tile(job_handle, tilescale, pos, callback);
 
@@ -283,7 +288,10 @@ DatabaseThread::generate_file_entry(const JobHandle& job_handle, const URL& url,
   }
 
   job_ptr->sig_file_callback().connect(boost::bind(&DatabaseThread::receive_file, this, _1));
-  job_ptr->sig_tile_callback().connect(boost::bind(&DatabaseThread::receive_tile, this, _1, _2));
+  if (!m_memory_only_tiles)
+  {
+    job_ptr->sig_tile_callback().connect(boost::bind(&DatabaseThread::receive_tile, this, _1, _2));
+  }
 
   m_tile_job_manager.request(job_ptr);
   //m_tile_job_manager.request(job_ptr, boost::bind(&DatabaseThread::request_job_removal, this, _1, _2));

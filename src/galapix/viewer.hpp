@@ -56,6 +56,8 @@ private:
   boost::shared_ptr<ZoomTool>   keyboard_zoom_out_tool;
 
   boost::shared_ptr<PanTool>      pan_tool;
+  boost::shared_ptr<PanTool>      fast_pan_tool;
+  boost::shared_ptr<PanTool>      extra_fast_pan_tool;
   boost::shared_ptr<MoveTool>     move_tool;
   boost::shared_ptr<ZoomRectTool> zoom_rect_tool;
   boost::shared_ptr<ZoomTool>     zoom_in_tool;

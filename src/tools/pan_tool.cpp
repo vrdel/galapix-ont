@@ -22,10 +22,11 @@
 
 #include "galapix/viewer.hpp"
 
-PanTool::PanTool(Viewer* viewer_)
+PanTool::PanTool(Viewer* viewer_, int base_pan_factor)
   : Tool(viewer_),
     trackball_mode(false),
     move_active(false),
+    m_base_pan_factor(base_pan_factor),
     mouse_pos()
 {
 }
@@ -41,7 +42,7 @@ PanTool::move(const Vector2i& pos, const Vector2i& rel)
   const int pan_factor =
     (modifiers & KMOD_SHIFT) ? 6 :
     (modifiers & KMOD_CTRL)  ? 3 :
-                               1;
+                               m_base_pan_factor;
 
   mouse_pos = pos;
 

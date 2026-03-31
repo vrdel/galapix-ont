@@ -167,6 +167,8 @@ Viewer::Viewer(Workspace* workspace_, bool show_filenames, float spacing_factor,
   keyboard_zoom_in_tool(),
   keyboard_zoom_out_tool(),
   pan_tool(),
+  fast_pan_tool(),
+  extra_fast_pan_tool(),
   move_tool(),
   zoom_rect_tool(),
   zoom_in_tool(),
@@ -192,6 +194,8 @@ Viewer::Viewer(Workspace* workspace_, bool show_filenames, float spacing_factor,
   current_ = this;
 
   pan_tool       = boost::shared_ptr<PanTool>(new PanTool(this));
+  fast_pan_tool  = boost::shared_ptr<PanTool>(new PanTool(this, 3));
+  extra_fast_pan_tool = boost::shared_ptr<PanTool>(new PanTool(this, 6));
   move_tool      = boost::shared_ptr<MoveTool>(new MoveTool(this));
   zoom_rect_tool = boost::shared_ptr<ZoomRectTool>(new ZoomRectTool(this));
   resize_tool    = boost::shared_ptr<ResizeTool>(new ResizeTool(this));
@@ -204,8 +208,8 @@ Viewer::Viewer(Workspace* workspace_, bool show_filenames, float spacing_factor,
   keyboard_zoom_out_tool = boost::shared_ptr<ZoomTool>(new ZoomTool(this,  4.0f));
 
   left_tool   = pan_tool.get();
-  middle_tool = pan_tool.get();
-  right_tool  = zoom_rect_tool.get();
+  middle_tool = fast_pan_tool.get();
+  right_tool  = extra_fast_pan_tool.get();
 
   m_background_color = 0;
   // Black to White
@@ -480,8 +484,8 @@ Viewer::set_pan_tool()
 {
   log_info << "Pan&Zoom Tools selected" << std::endl;
   left_tool   = pan_tool.get();
-  right_tool  = zoom_out_tool.get();
-  middle_tool = pan_tool.get();
+  right_tool  = extra_fast_pan_tool.get();
+  middle_tool = fast_pan_tool.get();
 }
 
 void
@@ -489,8 +493,8 @@ Viewer::set_zoom_tool()
 {
   log_info << "Zoom&Pan Tools selected" << std::endl;
   left_tool   = zoom_rect_tool.get();
-  right_tool  = zoom_out_tool.get();
-  middle_tool = pan_tool.get();
+  right_tool  = extra_fast_pan_tool.get();
+  middle_tool = fast_pan_tool.get();
 }
 
 void
@@ -498,8 +502,8 @@ Viewer::set_grid_tool()
 {
   log_info << "Grid Tool selected" << std::endl;
   left_tool   = grid_tool.get();
-  right_tool  = zoom_out_tool.get();
-  middle_tool = pan_tool.get();
+  right_tool  = extra_fast_pan_tool.get();
+  middle_tool = fast_pan_tool.get();
 }
 
 void
@@ -507,8 +511,8 @@ Viewer::set_move_resize_tool()
 {
   log_info << "Move&Resize Tools selected" << std::endl;
   left_tool   = move_tool.get();
-  right_tool  = resize_tool.get();
-  middle_tool = pan_tool.get();
+  right_tool  = extra_fast_pan_tool.get();
+  middle_tool = fast_pan_tool.get();
 }
 
 void

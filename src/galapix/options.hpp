@@ -34,6 +34,7 @@ public:
   unsigned int selection_border_color;
   bool        show_filenames;
   bool        auto_refresh_visible;
+  bool        memory_only;
   std::vector<std::string> rest;
   std::string title;
 
@@ -50,6 +51,7 @@ public:
     selection_border_color(0),
     show_filenames(false),
     auto_refresh_visible(false),
+    memory_only(false),
     title(),
     rest()
   {}
