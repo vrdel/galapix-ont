@@ -21,7 +21,9 @@
 #include <boost/bind.hpp>
 #include <algorithm>
 #include <cctype>
+#include <chrono>
 #include <fstream>
+#include <iomanip>
 #include <sstream>
 #include <stdlib.h>
 #include <stdexcept>
@@ -316,6 +318,7 @@ Galapix::thumbgen(const Options& opts,
                   const std::vector<URL>& urls,
                   bool generate_all_tiles)
 {
+  const std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
   Database       database(opts.database, opts.jpeg_quality);
   JobManager     job_manager(opts.threads);
   DatabaseThread database_thread(database, job_manager, opts.memory_only);
@@ -368,6 +371,26 @@ Galapix::thumbgen(const Options& opts,
 
   job_manager.join_thread();
   database_thread.join_thread();
+
+  const size_t discovered = urls.size();
+  const size_t prepared = file_entries.size();
+  const size_t skipped = discovered - prepared;
+  const size_t pending = prepared;
+  const double elapsed_seconds =
+    std::chrono::duration_cast<std::chrono::duration<double> >(std::chrono::steady_clock::now() - start_time).count();
+
+  std::ostringstream elapsed_minutes;
+  elapsed_minutes << std::fixed << std::setprecision(2) << (elapsed_seconds / 60.0);
+
+  std::cout << "  database: " << opts.database << "/cache3.sqlite3" << std::endl
+            << "  discovered: " << discovered << std::endl
+            << "  skipped: " << skipped << std::endl
+            << "  pending: " << pending << std::endl
+            << "  threads: " << opts.threads << std::endl
+            << "  prepared: " << prepared << std::endl
+            << "  stored_tiles: " << database_thread.get_stored_tiles() << std::endl
+            << "  elapsed: " << std::fixed << std::setprecision(2) << elapsed_seconds
+            << "s (" << elapsed_minutes.str() << "m)" << std::endl;
 }
 
 void

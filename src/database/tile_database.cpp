@@ -149,7 +149,6 @@ TileDatabase::delete_tiles(const FileId& fileid)
 void
 TileDatabase::flush_cache()
 {
-  std::cout << "TileDatabes::flush_cache()" << std::endl;
   m_db.get_files().flush_cache();
   m_cache.flush(*this);
 }

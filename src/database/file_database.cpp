@@ -134,7 +134,6 @@ FileDatabase::flush_cache()
 {
   if (!m_file_entry_cache.empty())
   {
-    std::cout << "FileDatabes::flush_cache()" << std::endl;
     m_db.get_db().exec("BEGIN;");
     for(std::vector<FileEntry>::iterator i = m_file_entry_cache.begin(); i != m_file_entry_cache.end(); ++i)
     {

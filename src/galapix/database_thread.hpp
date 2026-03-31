@@ -47,6 +47,7 @@ private:
 
   JobManager& m_tile_job_manager;
   bool m_memory_only_tiles;
+  size_t m_stored_tiles;
 
   bool m_quit;
   bool m_abort;
@@ -65,6 +66,8 @@ public:
   virtual ~DatabaseThread();
 
   bool is_memory_only_tiles() const { return m_memory_only_tiles; }
+  size_t get_stored_tiles() const { return m_stored_tiles; }
+  void count_stored_tile() { ++m_stored_tiles; }
 
   void stop_thread();
   void abort_thread();

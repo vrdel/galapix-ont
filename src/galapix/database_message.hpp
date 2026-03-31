@@ -261,6 +261,7 @@ public:
       // FIXME: Test the performance of this
       //if (!db.get_tiles().has_tile(tile.fileid, tile.pos, tile.scale))
       db.get_tiles().store_tile(m_file_entry, m_tile);
+      DatabaseThread::current()->count_stored_tile();
     }
     else
     {
