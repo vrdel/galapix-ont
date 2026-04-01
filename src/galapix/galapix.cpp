@@ -327,6 +327,7 @@ Galapix::thumbgen(const Options& opts,
   job_manager.start_thread();
 
   std::vector<FileEntry> file_entries;
+  std::vector<FileEntry> pattern_entries;
 
   JobHandleGroup job_handle_group;
 
@@ -345,6 +346,26 @@ Galapix::thumbgen(const Options& opts,
   }
   job_handle_group.wait();
   job_handle_group.clear();
+
+  for(std::vector<std::string>::const_iterator i = opts.patterns.begin(); i != opts.patterns.end(); ++i)
+  {
+    if (*i == "*")
+    {
+      database.get_files().get_file_entries(pattern_entries);
+    }
+    else
+    {
+      database.get_files().get_file_entries(*i, pattern_entries);
+    }
+  }
+
+  for(std::vector<FileEntry>::const_iterator i = pattern_entries.begin(); i != pattern_entries.end(); ++i)
+  {
+    if (std::find(file_entries.begin(), file_entries.end(), *i) == file_entries.end())
+    {
+      file_entries.push_back(*i);
+    }
+  }
 
   std::cout << "Got " << file_entries.size() << " files, generating tiles...: "  << generate_all_tiles << std::endl;
 
@@ -372,7 +393,7 @@ Galapix::thumbgen(const Options& opts,
   job_manager.join_thread();
   database_thread.join_thread();
 
-  const size_t discovered = urls.size();
+  const size_t discovered = urls.size() + pattern_entries.size();
   const size_t prepared = file_entries.size();
   const size_t skipped = discovered - prepared;
   const size_t pending = prepared;
@@ -658,7 +679,14 @@ Galapix::run(const Options& opts)
     }
     else if (command == "prepare")
     {
-      thumbgen(opts, urls, true);
+      if (urls.empty() && opts.patterns.empty())
+      {
+        std::cout << "Galapix::run(): Error: No URLs or patterns given" << std::endl;
+      }
+      else
+      {
+        thumbgen(opts, urls, true);
+      }
     }
     else if (command == "filegen")
     {
