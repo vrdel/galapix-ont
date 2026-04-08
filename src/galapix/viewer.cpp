@@ -570,6 +570,36 @@ Viewer::zoom_to_selection()
 }
 
 void
+Viewer::zoom_native_size()
+{
+  ImagePtr image;
+  SelectionPtr selection = m_workspace->get_selection();
+
+  if (!selection->empty())
+  {
+    image = *selection->begin();
+  }
+  else
+  {
+    image = m_workspace->get_image(m_state.screen2world(Vector2i(Framebuffer::get_width() / 2,
+                                                                 Framebuffer::get_height() / 2)));
+  }
+
+  if (!image)
+  {
+    return;
+  }
+
+  const float viewer_scale = 1.0f / image->get_scale();
+  const Vector2f screen_center(static_cast<float>(Framebuffer::get_width()) / 2.0f,
+                               static_cast<float>(Framebuffer::get_height()) / 2.0f);
+
+  m_state.set_angle(0.0f);
+  m_state.set_scale(viewer_scale);
+  m_state.set_offset(screen_center - image->get_pos() * viewer_scale);
+}
+
+void
 Viewer::delete_selection()
 {
   m_workspace->delete_selection();

@@ -103,6 +103,7 @@ Prepare cache tiles:
 
 ```bash
 ./cmake-build/galapix.sdl prepare --threads 8 --jpeg-quality 90 path/to/images
+./cmake-build/galapix.sdl prepare -p "holiday-2024" --threads 8
 ```
 
 Commands
@@ -149,6 +150,8 @@ Prepare Options
   number of worker threads used during cache generation
 - `--jpeg-quality N`
   JPEG quality for generated cache tiles, from `1` to `100`
+- `-p`, `--pattern REGEX`
+  generate cache tiles only for database entries whose URL matches the regex
 - `-d`, `--database FILE`
 
 Current Defaults
@@ -170,6 +173,8 @@ The most relevant SDL shortcuts in this fork are:
 - `Shift+1` tight layout reverse-sorted by filename
 - `2` tight layout sorted by mtime
 - `Shift+2` tight layout reverse-sorted by mtime
+- `n` show the selected image at native 1:1 size
+  if nothing is selected, uses the image under the screen center
 - `F11` toggle fullscreen
 - `F5` refresh selection
 - `c` clear cache

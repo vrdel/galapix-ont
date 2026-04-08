@@ -189,6 +189,10 @@ SDLViewer::process_event(const SDL_Event& event)
           m_viewer.zoom_home();
           break;
 
+        case SDLK_n:
+          m_viewer.zoom_native_size();
+          break;
+
         case SDLK_F12:
         {
           SoftwareSurfacePtr surface = Framebuffer::screenshot();

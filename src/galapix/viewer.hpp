@@ -120,6 +120,7 @@ public:
   // View Controls
   void zoom_to_selection();
   void zoom_home();
+  void zoom_native_size();
 
   // Other stuff
   void toggle_background_color(bool backwards = false);
